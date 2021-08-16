@@ -1,0 +1,13 @@
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\bin\Debug\netcoreapp3.1\RPGGame.exe
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\bin\Debug\netcoreapp3.1\RPGGame.deps.json
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\bin\Debug\netcoreapp3.1\RPGGame.runtimeconfig.json
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\bin\Debug\netcoreapp3.1\RPGGame.runtimeconfig.dev.json
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\bin\Debug\netcoreapp3.1\RPGGame.dll
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\bin\Debug\netcoreapp3.1\RPGGame.pdb
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\obj\Debug\netcoreapp3.1\RPGGame.csproj.AssemblyReference.cache
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\obj\Debug\netcoreapp3.1\RPGGame.AssemblyInfoInputs.cache
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\obj\Debug\netcoreapp3.1\RPGGame.AssemblyInfo.cs
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\obj\Debug\netcoreapp3.1\RPGGame.csproj.CoreCompileInputs.cache
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\obj\Debug\netcoreapp3.1\RPGGame.dll
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\obj\Debug\netcoreapp3.1\RPGGame.pdb
+C:\Users\MZ-admin\Desktop\SD\Assignments\RPGGame\RPGGame\obj\Debug\netcoreapp3.1\RPGGame.genruntimeconfig.cache
