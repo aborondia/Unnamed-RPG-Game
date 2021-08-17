@@ -35,7 +35,7 @@ namespace RPGGame
       Pause(1600);
       Console.Clear();
 
-      Console.WriteLine("Do you want to create your own party or choose your own?");
+      Console.WriteLine("Do you want to create your own party or use the pre-made party?");
       Console.WriteLine("[1] Use pre-made party.");
       Console.WriteLine("[2] Create my own.");
 
