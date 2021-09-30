@@ -10,15 +10,15 @@ It is an RPG game built using C#, for the C# console. The requirements for the p
 * Ability to Equip weapon/armor
 * Enable fights between player characters and monsters (victory, game over, etc.)
 * Receive gold for winning battles which can be used to restore health
-* A hero with:
-*     Name
-*     Base Strength
-*     Base Defense
-*     Health
-*     Equipped Weapon
-*     Equipped Armor
-*     Armor Bag
-*     Weapon Bag
+*     A hero with:
+* Name
+* Base Strength
+* Base Defense
+* Health
+* Equipped Weapon
+* Equipped Armor
+* Armor Bag
+* Weapon Bag
 * A monster class with the same base attributes (no items/equipment) as the player
 
 ## The extra attributes/functionality, etc. I added:
@@ -28,17 +28,17 @@ It is an RPG game built using C#, for the C# console. The requirements for the p
 * Cheat Menu (give characters max level, max gold, strongest equipment)
 * Consumable items
 * Four character player party
-* Extra player attributes/functions:
-*     Mana
-*     Magic power
-*     Magic defense
-*     Agility
-*     Dexterity
+*     Extra player attributes/functions:
+* Mana
+* Magic power
+* Magic defense
+* Agility
+* Dexterity
 *     Abilities, which include:
-*         Damage multiplier (based on different character stat depending on ability)
-*         Type (damage, healing, buff)
-*         Health/mana cost (physical = health cost, magic = mana cost)
-*         Element type
+* Damage multiplier (based on different character stat depending on ability)
+* Type (damage, healing, buff)
+* Health/mana cost (physical = health cost, magic = mana cost)
+* Element type
 * Extra enemy attributes/functions:
 * Same stats as player (excluding mana)
 * Abilities, with same properties (other than cost) as player, and including odds of enemy using ability
