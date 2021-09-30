@@ -39,9 +39,9 @@ It is an RPG game built using C#, for the C# console. The requirements for the p
      * Type (damage, healing, buff)
      * Health/mana cost (physical = health cost, magic = mana cost)
      * Element type
-   * Extra enemy attributes/functions:
-     * Same stats as player (excluding mana)
-     * Abilities, with same properties (other than cost) as player, and including odds of enemy using ability
+ * Extra enemy attributes/functions:
+   * Same stats as player (excluding mana)
+   * Abilities, with same properties (other than cost) as player, and including odds of enemy using ability
 
 * Town where the player can use different facilities in exchange for gold:
   * Inn - Restores health
