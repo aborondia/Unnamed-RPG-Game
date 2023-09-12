@@ -1,6 +1,6 @@
 # Unnamed RPG Game - [Andrew Borondia](https://cranky-beaver-6bfa9c.netlify.app/projects)
 
-This is a project I made as part of the Software Developer program at the Manitoba Institute of trades and Technology.
+This is a project I made as part of the Software Developer program at the Manitoba Institute of Trades and Technology.
 
 It is an RPG game built using C#, for the C# console. The requirements for the project were very basic, but I have added many extra features.
 
@@ -27,11 +27,11 @@ It is an RPG game built using C#, for the C# console. The requirements for the p
 * Elements (extra/less damage depending on resistances)
 * Cheat Menu (give characters max level, max gold, strongest equipment)
 * Consumable items
-* Four character player party
+* Four-character player party
 * Extra player attributes/functions:
    * Mana
-   * Magic power
-   * Magic defense
+   * Magic Power
+   * Magic Defense
    * Agility
    * Dexterity
    * Abilities, which include:
@@ -40,8 +40,8 @@ It is an RPG game built using C#, for the C# console. The requirements for the p
      * Health/mana cost (physical = health cost, magic = mana cost)
      * Element type
  * Extra enemy attributes/functions:
-   * Same stats as player (excluding mana)
-   * Abilities, with same properties (other than cost) as player, and including odds of enemy using ability
+   * Same stats as a player (excluding mana)
+   * Abilities, with the same properties (other than cost) as the player, and including odds of the enemy using an ability
 
 * Town where the player can use different facilities in exchange for gold:
   * Inn - Restores health
