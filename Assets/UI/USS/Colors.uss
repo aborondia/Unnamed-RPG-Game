@@ -1,0 +1,82 @@
+:root {
+  --console-black: rgb(0, 0, 0);
+  --console-dark-blue: rgb(0, 0, 128);
+  --console-dark-green: rgb(0, 128, 0);
+  --console-dark-cyan: rgb(0, 128, 128);
+  --console-dark-red: rgb(128, 0, 0);
+  --console-dark-magenta: rgb(128, 0, 128);
+  --console-dark-yellow: rgb(128, 128, 0);
+  --console-gray: rgb(192, 192, 192);
+  --console-dark-gray: rgb(128, 128, 128);
+  --console-blue: rgb(0, 0, 255);
+  --console-green: rgb(0, 255, 0);
+  --console-cyan: rgb(0, 255, 255);
+  --console-red: rgb(255, 0, 0);
+  --console-magenta: rgb(255, 0, 255);
+  --console-yellow: rgb(255, 255, 0);
+  --console-white: rgb(255, 255, 255);
+}
+
+.label-black {
+  color: var(--console-black);
+}
+
+.label-dark-blue {
+  color: var(--console-dark-blue);
+}
+
+.label-dark-green {
+  color: var(--console-dark-green);
+}
+
+.label-dark-cyan {
+  color: var(--console-dark-cyan);
+}
+
+.label-dark-red {
+  color: var(--console-dark-red);
+}
+
+.label-dark-magenta {
+  color: var(--console-dark-magenta);
+}
+
+.label-dark-yellow {
+  color: var(--console-dark-yellow);
+}
+
+.label-gray {
+  color: var(--console-gray);
+}
+
+.label-dark-gray {
+  color: var(--console-dark-gray);
+}
+
+.label-blue {
+  color: var(--console-blue);
+}
+
+.label-green {
+  color: var(--console-green);
+}
+
+.label-cyan {
+  color: var(--console-cyan);
+}
+
+.label-red {
+  color: var(--console-red);
+}
+
+.label-magenta {
+  color: var(--console-magenta);
+}
+
+.label-yellow {
+  color: var(--console-yellow);
+}
+
+.label-white {
+  color: var(--console-white);
+}

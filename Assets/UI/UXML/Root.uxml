@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="ConsoleLineEntry" src="project://database/Assets/UI/UXML/ConsoleLineEntry.uxml?fileID=9197481963319205126&amp;guid=4b7002346e29447419eb7dd06d487f81&amp;type=3#ConsoleLineEntry"/>
+    <Style src="project://database/Assets/UI/USS/Root.uss?fileID=7433441132597879392&amp;guid=1e8f63d633071a34bbf51e5e0f092984&amp;type=3#Root"/>
+    <Style src="project://database/Assets/UI/USS/Colors.uss?fileID=7433441132597879392&amp;guid=58d8313fd2ce23d41adbb276fa1dbc8b&amp;type=3#Colors"/>
+    <ui:VisualElement name="main" style="width: 100%; height: 100%;">
+        <ui:VisualElement name="console" class="console" style="flex-grow: 1; position: absolute; width: 100%; height: 100%;"/>
+        <ui:VisualElement name="content-container" class="content-container" style="flex-direction: column;">
+            <ui:ScrollView>
+                <ui:Instance template="ConsoleLineEntry" name="ConsoleLineEntry"/>
+            </ui:ScrollView>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
