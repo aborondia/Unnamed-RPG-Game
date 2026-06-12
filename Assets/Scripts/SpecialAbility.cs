@@ -4,12 +4,12 @@ using System.Text;
 
 namespace RPGGame
 {
-  enum PoolUsed
+  public enum PoolUsed
   {
     HP,
     MP
   }
-  enum StatUsed
+  public enum StatUsed
   {
     Strength,
     Magic,
@@ -17,7 +17,7 @@ namespace RPGGame
     Agility,
     Dexterity
   }
-  class SpecialAbility
+   public class SpecialAbility
   {
     protected string _name;
     protected string _actionText;
@@ -98,7 +98,7 @@ namespace RPGGame
     }
   }
 
-  class PlayerAbility : SpecialAbility
+  public class PlayerAbility : SpecialAbility
   {
     private ConsoleKey _keyBind;
     private PoolUsed _poolUsed;
@@ -133,36 +133,36 @@ base(name, actionText, description, statMultiplier, statUsed, element, attacktyp
         Console.ForegroundColor = ConsoleColor.DarkGray;
       }
 
-      Console.Write($"{this._name} - {cost}{this._poolUsed} ");
-      Console.Write("- Element: ");
+      UIController.Active.Write($"{this._name} - {cost}{this._poolUsed} ");
+      UIController.Active.Write("- Element: ");
       switch (this._element)
       {
         case Element.None:
-          Console.Write("None ");
+          UIController.Active.Write("None ");
           break;
         case Element.Fire:
-          GameEngine.ColorText(ConsoleColor.DarkRed, "Fire ", false);
+          UIController.Active.WriteColorText(ConsoleColor.DarkRed, "Fire ", false);
           break;
         case Element.Water:
-          GameEngine.ColorText(ConsoleColor.DarkBlue, "Water ", false);
+          UIController.Active.WriteColorText(ConsoleColor.DarkBlue, "Water ", false);
           break;
         case Element.Wind:
-          GameEngine.ColorText(ConsoleColor.DarkGreen, "Wind ", false);
+          UIController.Active.WriteColorText(ConsoleColor.DarkGreen, "Wind ", false);
           break;
         case Element.Earth:
-          GameEngine.ColorText(ConsoleColor.DarkYellow, "Earth ", false);
+          UIController.Active.WriteColorText(ConsoleColor.DarkYellow, "Earth ", false);
           break;
         case Element.Dark:
-          GameEngine.ColorText(ConsoleColor.DarkGray, "Dark ", false);
+          UIController.Active.WriteColorText(ConsoleColor.DarkGray, "Dark ", false);
           break;
         case Element.Light:
-          GameEngine.ColorText(ConsoleColor.Yellow, "Light ", false);
+          UIController.Active.WriteColorText(ConsoleColor.Yellow, "Light ", false);
           break;
       }
-      Console.Write($"- Stat Used: {this._statUsed} ");
+      UIController.Active.Write($"- Stat Used: {this._statUsed} ");
 
 
-      Console.Write($"- {this._description}");
+      UIController.Active.Write($"- {this._description}");
       Console.ForegroundColor = ConsoleColor.White;
     }
 
@@ -189,7 +189,7 @@ base(name, actionText, description, statMultiplier, statUsed, element, attacktyp
     }
   }
 
-  class EnemyAbility : SpecialAbility
+  public class EnemyAbility : SpecialAbility
   {
     public EnemyAbility(string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect) :
   base(name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect)

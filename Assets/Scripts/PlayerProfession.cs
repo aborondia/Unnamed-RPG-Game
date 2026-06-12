@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace RPGGame
 {
-  class PlayerProfession
+  public class PlayerProfession
   {
-    public static GameDataBase GameData = GameEngine.GameData;
+    public static GameDataBase GameData = GameEngine.Active.GameData;
     protected string _name;
     protected Dictionary<int, PlayerAbility> _learnableAbilities;
     protected Dictionary<StatModifierType, int> _levelUpStats = new Dictionary<StatModifierType, int>();
@@ -43,7 +43,15 @@ namespace RPGGame
 
     public PlayerAbility GetNewAbility(int id)
     {
-      return this._learnableAbilities[id];
+      if (this._learnableAbilities.ContainsKey(id))
+      {
+        return this._learnableAbilities[id];
+      }
+      else
+      {
+        Debug.Log("fuck");
+        return this._learnableAbilities.Last().Value;
+      }
     }
 
     protected void PopulateLevelUpStats()
@@ -59,11 +67,10 @@ namespace RPGGame
     }
   }
 
-  class Warrior : PlayerProfession
+  public class Warrior : PlayerProfession
   {
 
     public Dictionary<int, PlayerAbility> LearnableAbilities { get => this._learnableAbilities; }
-    public Dictionary<StatModifierType, int> LevelUpStats { get => this._levelUpStats; }
     public Warrior()
     {
       this._name = "Warrior";
@@ -90,7 +97,7 @@ namespace RPGGame
     }
   }
 
-  class Rouge : PlayerProfession
+  public class Rouge : PlayerProfession
   {
     public Dictionary<int, PlayerAbility> LearnableAbilities { get => this._learnableAbilities; }
     public Rouge()
@@ -119,7 +126,7 @@ namespace RPGGame
     }
   }
 
-  class Wizard : PlayerProfession
+  public class Wizard : PlayerProfession
   {
     public Dictionary<int, PlayerAbility> LearnableAbilities { get => this._learnableAbilities; }
     public Wizard()
@@ -148,7 +155,7 @@ namespace RPGGame
     }
   }
 
-  class Cleric : PlayerProfession
+  public class Cleric : PlayerProfession
   {
     public Dictionary<int, PlayerAbility> LearnableAbilities { get => this._learnableAbilities; }
     public Cleric()

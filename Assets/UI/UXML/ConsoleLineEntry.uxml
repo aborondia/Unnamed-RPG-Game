@@ -1,6 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/USS/ConsoleLineEntry.uss?fileID=7433441132597879392&amp;guid=32fb6bca65e58eb4eb7c559fce37e0c6&amp;type=3#ConsoleLineEntry"/>
-    <ui:VisualElement name="main">
+    <ui:VisualElement name="main" class="console-line-main">
         <ui:VisualElement name="label-container" class="console-line-entry-label-container">
             <ui:Label text="Text" name="label" class="label-white console-line-entry-label"/>
         </ui:VisualElement>

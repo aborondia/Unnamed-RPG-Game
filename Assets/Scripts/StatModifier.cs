@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RPGGame
 {
-  enum StatModifierType
+  public enum StatModifierType
   {
     Health,
     Mana,
@@ -17,9 +17,9 @@ namespace RPGGame
     Dexterity
 
   }
-  class StatModifier
+  public class StatModifier
   {
-    public static GameDataBase GameData = GameEngine.GameData;
+    public static GameDataBase GameData = GameEngine.Active.GameData;
     private StatModifierType _statModifierType;
     private int _statModifierValue;
 

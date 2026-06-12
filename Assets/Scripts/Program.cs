@@ -8,7 +8,7 @@ namespace RPGGame
     // Andrew Borondia
     static void Main()
     {
-      GameEngine.StartGame();
+      GameEngine.Active.StartGame();
     }
   }
 }

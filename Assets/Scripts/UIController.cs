@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using RPGGame;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,9 +9,12 @@ public class UIController : MonoBehaviour
     public static UIController Active;
     [SerializeField] private UIDocument uiDocument;
     [SerializeField] private VisualTreeAsset consoleLineTemplate;
-    private Queue<VisualElement> consoleLines;
+    private Queue<VisualElement> consoleLines = new Queue<VisualElement>();
     private VisualElement root;
     private ScrollView contentScrollView;
+    private VisualElement userInputFieldParent;
+    private TextField userInputField;
+    public TextField UserInputField => userInputField;
     private VisualElement lastLineModified;
 
     private void Awake()
@@ -30,20 +33,31 @@ public class UIController : MonoBehaviour
     {
         this.root = this.uiDocument.rootVisualElement;
         this.contentScrollView = this.root.Q<ScrollView>();
+        this.userInputFieldParent = this.contentScrollView.contentContainer.Q<TemplateContainer>("UserInputField");
+        this.userInputField = this.userInputFieldParent.Q<TextField>();
+        this.UserInputField.RegisterCallback<FocusOutEvent>(evt => this.UserInputField.Focus());
+        this.contentScrollView.contentContainer.Clear();
     }
 
-    public Label WriteLine(string value)
+    public Label WriteLine(int value)
+    {
+        return WriteLine(value.ToString());
+    }
+
+    public Label WriteLine(string value = "")
     {
         Label label = GetConsoleLabel(true);
+        label.AddToClassList(GetFontColorSelector(ConsoleColor.White));
 
         label.text = value;
-
+        GameEngine.Active.PerformActionAfterPause(() => ScrollToEnd(), 50);
         return label;
     }
 
     public Label Write(string value)
     {
         Label label = GetConsoleLabel(false);
+        label.AddToClassList(GetFontColorSelector(ConsoleColor.White));
 
         label.text = value;
 
@@ -57,8 +71,25 @@ public class UIController : MonoBehaviour
         ColorText(label, consoleColor);
     }
 
+    public void ShowUserInputField()
+    {
+        this.userInputField.value = String.Empty;
+        this.userInputField.focusable = true;
+        this.userInputField.style.display = DisplayStyle.Flex;
+        this.contentScrollView.contentContainer.Add(this.userInputFieldParent);
+        this.userInputField.Focus();
+    }
+
+    public void HideUserInputField()
+    {
+        this.userInputField.focusable = false;
+        this.userInputField.style.display = DisplayStyle.None;
+        // this.contentScrollView.contentContainer.Remove(this.userInputFieldParent);
+    }
+
     private void ColorText(Label label, ConsoleColor consoleColor)
     {
+        label.RemoveFromClassList("label-white");
         label.AddToClassList(GetFontColorSelector(consoleColor));
     }
 
@@ -74,7 +105,6 @@ public class UIController : MonoBehaviour
             if (this.consoleLines.Count <= 0)
             {
                 consoleLine = this.consoleLineTemplate.Instantiate();
-                this.consoleLines.Enqueue(consoleLine);
             }
             else
             {
@@ -103,6 +133,11 @@ public class UIController : MonoBehaviour
 
     public void Clear()
     {
+        foreach (VisualElement consoleLine in this.contentScrollView.contentContainer.Children())
+        {
+            this.consoleLines.Enqueue(consoleLine);
+        }
+
         this.contentScrollView.contentContainer.Clear();
         this.lastLineModified = null;
     }
@@ -147,4 +182,14 @@ public class UIController : MonoBehaviour
                 return "label-white";
         }
     }
+
+    public void ScrollToEnd()
+    {
+        this.contentScrollView.verticalScroller.value = this.contentScrollView.verticalScroller.highValue;
+    }
+    // TODO Implement for mobile
+    // public void SimulateKeyPressed()
+    // {
+    //     InputSystem.QueueStateEvent(Keyboard.current, new KeyboardState(Key.W));
+    // }
 }

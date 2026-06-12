@@ -1,63 +1,75 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Cysharp.Threading.Tasks;
 
 namespace RPGGame
 {
-  enum Difficulty
+  public enum Difficulty
   {
     Easy,
     Average,
     Hard,
     VeryHard
   }
-  static class Map
+  public static class Map
   {
-    public static GameDataBase GameData = GameEngine.GameData;
+    public static GameDataBase GameData = GameEngine.Active.GameData;
 
-
-    public static void StartMap()
+    public static async void StartMap()
     {
-      Console.WriteLine("Where would you like to look for monsters to slay?");
-      Console.WriteLine();
-      Console.WriteLine("[1] Forest of Illusion - Easy");
-      Console.WriteLine("[2] Caves of Despair - Average");
-      Console.WriteLine("[3] Lair of Vile Beasts - Hard");
-      Console.WriteLine("[4] The Underworld - Very Hard");
-      Console.WriteLine("[Esc] Return to menu");
+      string keyPressed = String.Empty;
+      UIController.Active.WriteLine("Where would you like to look for monsters to slay?");
+      UIController.Active.WriteLine();
+      UIController.Active.WriteLine("[1] Forest of Illusion - Easy");
+      UIController.Active.WriteLine("[2] Caves of Despair - Average");
+      UIController.Active.WriteLine("[3] Lair of Vile Beasts - Hard");
+      UIController.Active.WriteLine("[4] The Underworld - Very Hard");
+      UIController.Active.WriteLine("[Esc] Return to menu");
 
-      while (GameEngine.CurrentGameState == GameState.Map)
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
       {
-        switch (Console.ReadKey(true).Key)
+        switch (GameEngine.Active.CurrentKeyPressed)
         {
-          case ConsoleKey.D1:
-            GameEngine.Difficulty = Difficulty.Easy;
-            Console.WriteLine("You explore The Forest of Illusion...");
-            GameEngine.Pause(1600);
-            GameEngine.SwitchGameState(GameState.Battle);
-            break;
-          case ConsoleKey.D2:
-            Console.WriteLine("You explore The Caves of Despair...");
-            GameEngine.Pause(1600);
-            GameEngine.Difficulty = Difficulty.Average;
-            GameEngine.SwitchGameState(GameState.Battle);
-            break;
-          case ConsoleKey.D3:
-            GameEngine.Difficulty = Difficulty.Hard;
-            Console.WriteLine("You explore The Lair of Vile Beasts...");
-            GameEngine.Pause(1600);
-            GameEngine.SwitchGameState(GameState.Battle);
-            break;
-          case ConsoleKey.D4:
-            Console.WriteLine("You explore The Underworld...");
-            GameEngine.Difficulty = Difficulty.VeryHard;
-            GameEngine.Pause(1600);
-            GameEngine.SwitchGameState(GameState.Battle);
-            break;
-          case ConsoleKey.Escape:
-            GameEngine.SwitchGameState(GameState.Menu);
-            break;
+          case "1":
+          case "2":
+          case "3":
+          case "4":
+          case "escape":
+            keyPressed = GameEngine.Active.CurrentKeyPressed;
+            return true;
         }
+
+        return false;
+      });
+
+      switch (keyPressed)
+      {
+        case "1":
+          GameEngine.Active.Difficulty = Difficulty.Easy;
+          UIController.Active.WriteLine("You explore The Forest of Illusion...");
+          await GameEngine.Active.Pause(1600);
+          GameEngine.Active.SwitchGameState(GameState.Battle);
+          break;
+        case "2":
+          UIController.Active.WriteLine("You explore The Caves of Despair...");
+          await GameEngine.Active.Pause(1600);
+          GameEngine.Active.Difficulty = Difficulty.Average;
+          GameEngine.Active.SwitchGameState(GameState.Battle);
+          break;
+        case "3":
+          GameEngine.Active.Difficulty = Difficulty.Hard;
+          UIController.Active.WriteLine("You explore The Lair of Vile Beasts...");
+          await GameEngine.Active.Pause(1600);
+          GameEngine.Active.SwitchGameState(GameState.Battle);
+          break;
+        case "4":
+          UIController.Active.WriteLine("You explore The Underworld...");
+          GameEngine.Active.Difficulty = Difficulty.VeryHard;
+          await GameEngine.Active.Pause(1600);
+          GameEngine.Active.SwitchGameState(GameState.Battle);
+          break;
+        case "escape":
+          GameEngine.Active.SwitchGameState(GameState.Menu);
+          break;
       }
     }
   }

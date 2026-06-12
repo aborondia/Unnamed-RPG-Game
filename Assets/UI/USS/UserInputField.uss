@@ -1,0 +1,26 @@
+.input-text-field {
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+}
+
+.input-text-field > #unity-text-input {
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  border-top-width: 0;
+  border-right-width: 0;
+  border-bottom-width: 0;
+  border-left-width: 0;
+  background-color: rgba(0, 0, 0, 0);
+  --unity-cursor-color: var(--console-magenta);
+}
+
+.input-text-field > #unity-text-input > TextElement {
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+}

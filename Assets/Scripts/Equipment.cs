@@ -4,15 +4,15 @@ using System.Text;
 
 namespace RPGGame
 {
-  enum EquipmentType
+  public enum EquipmentType
   {
     MainHand,
     OffHand,
     Armor
   }
-  class Equipment
+  public class Equipment
   {
-    public static GameDataBase GameData = GameEngine.GameData;
+    public static GameDataBase GameData = GameEngine.Active.GameData;
     private int _price;
     private EquipmentType _equipmentType;
     private string _name;
@@ -39,20 +39,20 @@ namespace RPGGame
 
     public void PrintEquipmentInfo(bool tradeInCost = true)
     {
-      Console.Write($"{this._equipmentType}: {this._name} -");
+      UIController.Active.Write($"{this._equipmentType}: {this._name} -");
 
       foreach (StatModifier statModifier in this._statModifiers)
       {
-        Console.Write($" {statModifier.StatModifierType}+{statModifier.StatModifierValue} ");
+        UIController.Active.Write($" {statModifier.StatModifierType}+{statModifier.StatModifierValue} ");
       }
 
       if (tradeInCost)
       {
-        Console.Write($"Trade in price: {this.TradeInPrice}G");
+        UIController.Active.Write($"Trade in price: {this.TradeInPrice}G");
       }
       else
       {
-        Console.Write($"Price: {this._price}G");
+        UIController.Active.Write($"Price: {this._price}G");
       }
     }
   }

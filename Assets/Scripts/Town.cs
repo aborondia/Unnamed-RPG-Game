@@ -1,67 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace RPGGame
 {
   static class Town
   {
-    public static GameDataBase GameData = GameEngine.GameData;
+    public static GameDataBase GameData = GameEngine.Active.GameData;
     public static void StartTown()
     {
       TownMenu();
     }
 
-    private static void TownMenu()
+    private static async void TownMenu()
     {
-      Console.WriteLine("Where would you like to go?");
-      Console.WriteLine("[1] Inn");
-      Console.WriteLine("[2] Arms Dealer");
-      Console.WriteLine("[3] Apothecary");
-      Console.WriteLine("[4] Doctor");
-      //Console.WriteLine("[5] Adventurer's Guild"); - sorry, I didn't have enough time to implement this
-      Console.WriteLine("[Esc] Return to menu");
+      UIController.Active.WriteLine("Where would you like to go?");
+      UIController.Active.WriteLine("[1] Inn");
+      UIController.Active.WriteLine("[2] Arms Dealer");
+      UIController.Active.WriteLine("[3] Apothecary");
+      UIController.Active.WriteLine("[4] Doctor");
+      //UIController.Active.WriteLine("[5] Adventurer's Guild"); - sorry, I didn't have enough time to implement this
+      UIController.Active.WriteLine("[Esc] Return to menu");
 
-      while (GameEngine.CurrentGameState == GameState.Town)
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
       {
-        switch (Console.ReadKey(true).Key)
+        switch (GameEngine.Active.CurrentKeyPressed)
         {
-          case ConsoleKey.D1:
-
-            Console.Clear();
+          case "1":
+            UIController.Active.Clear();
             InnMenu();
-            break;
-          case ConsoleKey.D2:
-
-            Console.Clear();
+            return true;
+          case "2":
+            UIController.Active.Clear();
             ArmsDealerMenu();
-            break;
-          case ConsoleKey.D3:
-
-            Console.Clear();
+            return true;
+          case "3":
+            UIController.Active.Clear();
             ApothecaryMenu();
-            break;
-          case ConsoleKey.D4:
-
-            Console.Clear();
+            return true;
+          case "4":
+            UIController.Active.Clear();
             DoctorMenu();
-            break;
-          case ConsoleKey.Escape:
-
-            Console.Clear();
-            GameEngine.SwitchGameState(GameState.Menu);
-            break;
-          default: continue;
+            return true;
+          case "escape":
+            UIController.Active.Clear();
+            GameEngine.Active.SwitchGameState(GameState.Menu);
+            return true;
         }
-      }
+
+        return false;
+      });
     }
 
-    private static void InnMenu()
+    private static async void InnMenu()
     {
 
       int costToRest = GetInnCost();
       // Taken from https://www.asciiart.eu
-      Console.WriteLine(@"
+      UIController.Active.WriteLine(@"
     XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
  XXXXXXXXXXXXXXXXXX         XXXXXXXX
@@ -82,29 +79,28 @@ XXXXXXXXXXXXX                   XXXXX
           |\             /|
           |  \_________/  |");
 
-      Console.WriteLine("How can I help you today?");
-      Console.WriteLine();
-      Console.WriteLine($"Party Gold: {PartyInfo.Gold}");
-      Console.WriteLine($"[Space] Rest at the inn - {costToRest} gold");
-      Console.WriteLine($"[Esc] Return to town");
+      UIController.Active.WriteLine("How can I help you today?");
+      UIController.Active.WriteLine();
+      UIController.Active.WriteLine($"Party Gold: {PartyInfo.Gold}");
+      UIController.Active.WriteLine($"[Space] Rest at the inn - {costToRest} gold");
+      UIController.Active.WriteLine($"[Esc] Return to town");
 
-
-      while (GameEngine.CurrentGameState == GameState.Town)
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
       {
-        switch (Console.ReadKey(true).Key)
+        switch (GameEngine.Active.CurrentKeyPressed)
         {
-          case ConsoleKey.Spacebar:
-
-            Console.Clear();
+          case "spacebar":
+            UIController.Active.Clear();
             RestAtInn(costToRest);
-            break;
-          case ConsoleKey.Escape:
-
-            Console.Clear();
+            return true;
+          case "escape":
+            UIController.Active.Clear();
             TownMenu();
-            break;
+            return true;
         }
-      }
+
+        return false;
+      });
     }
 
     private static int GetInnCost()
@@ -121,12 +117,12 @@ XXXXXXXXXXXXX                   XXXXX
       return cost;
     }
 
-    private static void RestAtInn(int costToRest)
+    private static async void RestAtInn(int costToRest)
     {
       if (PartyInfo.Gold < costToRest)
       {
-        Console.WriteLine("You do not have enough money to rest here for the night.");
-        GameEngine.Pause();
+        UIController.Active.WriteLine("You do not have enough money to rest here for the night.");
+        await GameEngine.Active.Pause();
         TownMenu();
       }
       else
@@ -142,18 +138,18 @@ XXXXXXXXXXXXX                   XXXXX
           }
         }
 
-        Console.WriteLine("Your party rested for the night...");
-        GameEngine.Pause(1600);
-        Console.Clear();
+        UIController.Active.WriteLine("Your party rested for the night...");
+        await GameEngine.Active.Pause(1600);
+        UIController.Active.Clear();
         TownMenu();
       }
     }
 
-    private static void ArmsDealerMenu()
+    private static async void ArmsDealerMenu()
     {
 
       // Taken from https://www.asciiart.eu
-      Console.WriteLine(@"
+      UIController.Active.WriteLine(@"
    .------\ /------.
    |       -       |
    |               |
@@ -171,104 +167,105 @@ _______________________
     \##         ##/
      \_____v_____/
 ");
-      Console.WriteLine("You looking for something in particular?");
-      Console.WriteLine();
-      Console.WriteLine("Who would you like to buy new equipment for?");
-      Console.WriteLine();
-      Console.WriteLine($"[1] {PartyInfo.PartyMembers[0].Name}");
-      Console.WriteLine($"[2] {PartyInfo.PartyMembers[1].Name}");
-      Console.WriteLine($"[3] {PartyInfo.PartyMembers[2].Name}");
-      Console.WriteLine($"[4] {PartyInfo.PartyMembers[3].Name}");
-      Console.WriteLine($"[Esc] Return to town");
+      UIController.Active.WriteLine("You looking for something in particular?");
+      UIController.Active.WriteLine();
+      UIController.Active.WriteLine("Who would you like to buy new equipment for?");
+      UIController.Active.WriteLine();
+      UIController.Active.WriteLine($"[1] {PartyInfo.PartyMembers[0].Name}");
+      UIController.Active.WriteLine($"[2] {PartyInfo.PartyMembers[1].Name}");
+      UIController.Active.WriteLine($"[3] {PartyInfo.PartyMembers[2].Name}");
+      UIController.Active.WriteLine($"[4] {PartyInfo.PartyMembers[3].Name}");
+      UIController.Active.WriteLine($"[Esc] Return to town");
 
-      while (GameEngine.CurrentGameState == GameState.Town)
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
       {
-        switch (Console.ReadKey(true).Key)
+        switch (GameEngine.Active.CurrentKeyPressed)
         {
-          case ConsoleKey.D1:
-
-            Console.Clear();
+          case "1":
+            UIController.Active.Clear();
             ShowEquipmentForSale(PartyInfo.PartyMembers[0]);
-            break;
-          case ConsoleKey.D2:
-
-            Console.Clear();
+            return true;
+          case "2":
+            UIController.Active.Clear();
             ShowEquipmentForSale(PartyInfo.PartyMembers[1]);
-            break;
-          case ConsoleKey.D3:
-
-            Console.Clear();
+            return true;
+          case "3":
+            UIController.Active.Clear();
             ShowEquipmentForSale(PartyInfo.PartyMembers[2]);
-            break;
-          case ConsoleKey.D4:
-
-            Console.Clear();
+            return true;
+          case "4":
+            UIController.Active.Clear();
             ShowEquipmentForSale(PartyInfo.PartyMembers[3]);
-            break;
-          case ConsoleKey.Escape:
-
-            Console.Clear();
+            return true;
+          case "escape":
+            UIController.Active.Clear();
             TownMenu();
-            break;
+            return true;
         }
-      }
+
+        return false;
+      });
     }
 
-    private static void ShowEquipmentForSale(PlayerCharacter character)
+    private static async void ShowEquipmentForSale(PlayerCharacter character)
     {
       int keyBind = 1;
 
-      Dictionary<ConsoleKey, Equipment> equipmentKeyBinds = new Dictionary<ConsoleKey, Equipment>();
+      Dictionary<int, Equipment> equipmentKeyBinds = new Dictionary<int, Equipment>();
 
-      Console.WriteLine($"{character.Name}'s current equipment:");
+      UIController.Active.WriteLine($"{character.Name}'s current equipment:");
       character.MainHand.PrintEquipmentInfo();
-      Console.WriteLine();
+      UIController.Active.WriteLine();
       character.OffHand.PrintEquipmentInfo();
-      Console.WriteLine();
+      UIController.Active.WriteLine();
       character.Armor.PrintEquipmentInfo();
-      Console.WriteLine();
+      UIController.Active.WriteLine();
 
-      Console.WriteLine();
-      Console.WriteLine("Available equipment:");
+      UIController.Active.WriteLine();
+      UIController.Active.WriteLine("Available equipment:");
+
       foreach (Equipment item in GameData.Equipment)
       {
         if (character.PlayerProfession == item.CanBeUsedBy)
         {
-          equipmentKeyBinds.Add(GameEngine.IntToConsoleKey(keyBind), item);
-          Console.Write($"[{keyBind++}]");
+          equipmentKeyBinds.Add(keyBind, item);
+          UIController.Active.Write($"[{keyBind++}]");
           item.PrintEquipmentInfo(false);
-          Console.WriteLine();
+          UIController.Active.WriteLine();
         }
       }
-      Console.WriteLine("[Esc] Return to town");
+      UIController.Active.WriteLine("[Esc] Return to town");
 
-      ConsoleKey keyPressed;
-
-      while (GameEngine.CurrentGameState == GameState.Town)
-      {
-        keyPressed = Console.ReadKey(true).Key;
-
-        if (keyPressed == ConsoleKey.Escape)
+      string keyPressed;
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
         {
-          Console.Clear();
-          TownMenu();
-        }
+          keyPressed = GameEngine.Active.CurrentKeyPressed;
 
-        if (equipmentKeyBinds.ContainsKey(keyPressed))
-        {
-          PurchaseItem(equipmentKeyBinds[keyPressed], character);
-        }
-      }
+          if (keyPressed == "escape")
+          {
+            UIController.Active.Clear();
+            TownMenu();
+            return true;
+          }
+
+          if (int.TryParse(keyPressed, out int result) && equipmentKeyBinds.ContainsKey(result))
+          {
+            PurchaseItem(equipmentKeyBinds[result], character);
+            return true;
+          }
+
+          return false;
+        });
     }
 
-    private static void ApothecaryMenu()
+    private static async void ApothecaryMenu()
     {
       int keyBind = 1;
 
-      Dictionary<ConsoleKey, Consumable> consumableKeyBinds = new Dictionary<ConsoleKey, Consumable>();
+      Dictionary<int, Consumable> consumableKeyBinds = new Dictionary<int, Consumable>();
       // Taken from https://www.asciiart.eu
       // Art by THE LOCKER GNOME
-      Console.WriteLine(@"
+      UIController.Active.WriteLine(@"
                        ,---.
                        /    |
                       /     |
@@ -297,38 +294,41 @@ _______________________
         ||                ,'   / SSt|
 ");
 
-      Console.WriteLine("Hello friend. What can I get you today?");
-      Console.WriteLine();
+      UIController.Active.WriteLine("Hello friend. What can I get you today?");
+      UIController.Active.WriteLine();
 
       foreach (Consumable item in GameData.Consumables.Values)
       {
-        consumableKeyBinds.Add(GameEngine.IntToConsoleKey(keyBind), item);
-        Console.Write($"[{keyBind++}] ");
+        consumableKeyBinds.Add(keyBind, item);
+        UIController.Active.Write($"[{keyBind++}] ");
         item.PrintItemInfo(true);
       }
-      Console.WriteLine("[Esc] Return to town");
+      UIController.Active.WriteLine("[Esc] Return to town");
 
-      while (GameEngine.CurrentGameState == GameState.Town)
-      {
-        ConsoleKey keyPressed = Console.ReadKey(true).Key;
-
-        if (keyPressed == ConsoleKey.Escape)
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
         {
-          Console.Clear();
-          TownMenu();
-        }
+          string keyPressed = GameEngine.Active.CurrentKeyPressed;
 
-        if (consumableKeyBinds.ContainsKey(keyPressed))
-        {
-          PurchaseItem(consumableKeyBinds[keyPressed]);
-        }
-      }
+          if (keyPressed == "escape")
+          {
+            UIController.Active.Clear();
+            TownMenu();
+            return true;
+          }
+
+          if (int.TryParse(keyPressed, out int result) && consumableKeyBinds.ContainsKey(result))
+          {
+            PurchaseItem(consumableKeyBinds[result]);
+            return true;
+          }
+
+          return false;
+        });
     }
 
-    private static void PurchaseItem(Equipment item, PlayerCharacter character)
+    private static async void PurchaseItem(Equipment item, PlayerCharacter character)
     {
       int finalPrice = int.MinValue;
-
 
       switch (item.EquipmentType)
       {
@@ -343,55 +343,59 @@ _______________________
           break;
       }
 
-      Console.WriteLine();
+      UIController.Active.WriteLine();
 
       if (PartyInfo.Gold < finalPrice)
       {
-        Console.WriteLine("You don't have enough gold! Don't waste my time!");
-        GameEngine.Pause();
-        Console.Clear();
+        UIController.Active.WriteLine("You don't have enough gold! Don't waste my time!");
+        await GameEngine.Active.Pause();
+        UIController.Active.Clear();
         ArmsDealerMenu();
+        return;
       }
 
-      Console.WriteLine($"That will be {finalPrice}G with your trade in.");
-      Console.WriteLine();
-      Console.WriteLine("[Spacebar] Purchase equipment");
-      Console.WriteLine("[Esc] On second thought...");
+      UIController.Active.WriteLine($"That will be {finalPrice}G with your trade in.");
+      UIController.Active.WriteLine();
+      UIController.Active.WriteLine("[Spacebar] Purchase equipment");
+      UIController.Active.WriteLine("[Esc] On second thought...");
 
-      while (GameEngine.CurrentGameState == GameState.Town)
-      {
-        switch (Console.ReadKey(true).Key)
-        {
-          case ConsoleKey.Spacebar:
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+       {
+         switch (GameEngine.Active.CurrentKeyPressed)
+         {
+           case "spacebar":
+             PartyInfo.ModifyGold(-finalPrice);
+             character.EquipItem(item);
+             UIController.Active.WriteLine("Take good care of it.");
+             GameEngine.Active.PerformActionAfterPause(() =>
+             {
+               UIController.Active.Clear();
+               ArmsDealerMenu();
+             });
+             return true;
+           case "escape":
+             UIController.Active.Clear();
+             ArmsDealerMenu();
+             return true;
+         }
 
-            PartyInfo.ModifyGold(-finalPrice);
-            character.EquipItem(item);
-            Console.WriteLine("Take good care of it.");
-            GameEngine.Pause();
-            Console.Clear();
-            ArmsDealerMenu();
-            break;
-          case ConsoleKey.Escape:
-
-            Console.Clear();
-            ArmsDealerMenu();
-            break;
-        }
-      }
+         return false;
+       });
     }
 
-    private static void PurchaseItem(Consumable item)
+    private static async void PurchaseItem(Consumable item)
     {
       if (PartyInfo.Gold < item.Price)
       {
-        Console.WriteLine("I'm afraid you're short on gold my friend...");
-        GameEngine.Pause();
-        Console.Clear();
+        UIController.Active.WriteLine("I'm afraid you're short on gold my friend...");
+        await GameEngine.Active.Pause();
+        UIController.Active.Clear();
         ApothecaryMenu();
         return;
       }
 
       PartyInfo.ModifyGold(-item.Price);
+
       if (PartyInfo.UsableItems.ContainsKey(item))
       {
         PartyInfo.UsableItems[item]++;
@@ -400,20 +404,21 @@ _______________________
       {
         PartyInfo.UsableItems[item] = 1;
       }
-      Console.WriteLine();
-      Console.WriteLine("Thank you for your patronage!");
-      GameEngine.Pause();
-      Console.Clear();
+
+      UIController.Active.WriteLine();
+      UIController.Active.WriteLine("Thank you for your patronage!");
+      await GameEngine.Active.Pause();
+      UIController.Active.Clear();
       ApothecaryMenu();
     }
 
-    private static void DoctorMenu()
+    private static async void DoctorMenu()
     {
       int keyBind = 1;
 
-      Dictionary<ConsoleKey, PlayerCharacter> deadCharacters = new Dictionary<ConsoleKey, PlayerCharacter>();
+      Dictionary<int, PlayerCharacter> deadCharacters = new Dictionary<int, PlayerCharacter>();
       // Taken from https://www.asciiart.eu
-      Console.WriteLine(@"
+      UIController.Active.WriteLine(@"
                                      ____________
                                _____/            \_
                     __________/  _/          _____ \__
@@ -453,50 +458,55 @@ _______________________
                 _______|____/                       \___\__
 ");
 
-      Console.WriteLine("Hello there!");
+      UIController.Active.WriteLine("Hello there!");
 
       foreach (PlayerCharacter character in PartyInfo.PartyMembers)
       {
         if (character.CharacterStatus == CharacterStatus.Dead)
         {
-          deadCharacters.Add(GameEngine.IntToConsoleKey(keyBind++), character);
+          deadCharacters.Add(keyBind++, character);
         }
       }
 
       if (deadCharacters.Count <= 0)
       {
-        GameEngine.Pause();
-        Console.WriteLine("I'm glad to see that none of you are in need of my services!");
-        GameEngine.Pause();
-        Console.WriteLine("Have a nice day!");
-        GameEngine.Pause();
-        Console.Clear();
+        await GameEngine.Active.Pause();
+        UIController.Active.WriteLine("I'm glad to see that none of you are in need of my services!");
+        await GameEngine.Active.Pause();
+        UIController.Active.WriteLine("Have a nice day!");
+        await GameEngine.Active.Pause();
+        UIController.Active.Clear();
         TownMenu();
       }
       else
       {
         foreach (var character in deadCharacters)
         {
-          Console.WriteLine($"[{GameEngine.ConsoleKeyToInt(character.Key)}] {character.Value.Name} - {GetReviveCost(character.Value)}G");
+          UIController.Active.WriteLine($"[{character.Key}] {character.Value.Name} - {GetReviveCost(character.Value)}G");
         }
-        Console.WriteLine("[Esc] Return to town");
+
+        UIController.Active.WriteLine("[Esc] Return to town");
       }
 
-      while (GameEngine.CurrentGameState == GameState.Town)
-      {
-        ConsoleKey keyPressed = Console.ReadKey(true).Key;
-
-        if (keyPressed == ConsoleKey.Escape)
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
         {
-          Console.Clear();
-          TownMenu();
-        }
+          string keyPressed = GameEngine.Active.CurrentKeyPressed;
 
-        if (deadCharacters.ContainsKey(keyPressed))
-        {
-          ReviveCharacter(deadCharacters[keyPressed], deadCharacters);
-        }
-      }
+          if (keyPressed == "escape")
+          {
+            UIController.Active.Clear();
+            TownMenu();
+            return true;
+          }
+
+          if (int.TryParse(keyPressed, out int result) && deadCharacters.ContainsKey(result))
+          {
+            ReviveCharacter(deadCharacters[result], deadCharacters);
+            return true;
+          }
+
+          return false;
+        });
     }
 
     private static int GetReviveCost(PlayerCharacter character)
@@ -504,25 +514,31 @@ _______________________
       return character.Level * 100;
     }
 
-    private static void ReviveCharacter(PlayerCharacter character, Dictionary<ConsoleKey, PlayerCharacter> deadCharacters)
+    private static async void ReviveCharacter(PlayerCharacter character, Dictionary<int, PlayerCharacter> deadCharacters)
     {
       int reviveCost = GetReviveCost(character);
 
       if (PartyInfo.Gold < reviveCost)
       {
-        Console.WriteLine("It looks like you don't have enough...");
-        GameEngine.Pause(2400);
+        UIController.Active.WriteLine("It looks like you don't have enough...");
+        await GameEngine.Active.Pause(2400);
+
         foreach (var deadCharacter in deadCharacters.Values)
         {
           deadCharacter.CharacterStatus = CharacterStatus.Alive;
           deadCharacter.CurrentHealth = 1;
         }
-        Console.WriteLine("Still, I can't let you leave like that. Pay me what you can and I'll take care of you.");
-        GameEngine.Pause(2400);
-        Console.Clear();
-        Console.WriteLine("You waited patiently while your injured allies wounds were treated...");
-        GameEngine.Pause(2400);
-        Console.Clear();
+
+        UIController.Active.WriteLine("Still, I can't let you leave like that. Pay me what you can and I'll take care of you.");
+
+        await GameEngine.Active.Pause(2400);
+
+        UIController.Active.Clear();
+        UIController.Active.WriteLine("You waited patiently while your injured allies wounds were treated...");
+
+        await GameEngine.Active.Pause(2400);
+
+        UIController.Active.Clear();
         TownMenu();
       }
       else
@@ -530,8 +546,10 @@ _______________________
         PartyInfo.ModifyGold(-reviveCost);
         character.CharacterStatus = CharacterStatus.Alive;
         character.CurrentHealth = 1;
-        Console.WriteLine("I'll patch you up right away!");
-        GameEngine.Pause(2400);
+        UIController.Active.WriteLine("I'll patch you up right away!");
+
+        await GameEngine.Active.Pause(2400);
+
         DoctorMenu();
       }
     }

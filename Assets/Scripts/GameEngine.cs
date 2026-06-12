@@ -1,68 +1,122 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace RPGGame
 {
-  enum GameState
+  public enum GameState
   {
     Menu,
     Town,
     Map,
     Battle,
   }
-  static class GameEngine
+  public class GameEngine : MonoBehaviour
   {
-    public static GameDataBase GameData;
-    public static Difficulty Difficulty;
-    private static int _defaultPauseDuration = 1000;
-    private static GameState _currentGameState;
+    public static GameEngine Active;
+    public delegate bool WaitForPlayerActionDelegate();
+    public GameDataBase GameData;
+    public Difficulty Difficulty;
+    private int _defaultPauseDuration = 1000;
+    private GameState _currentGameState;
+    public GameState CurrentGameState { get => _currentGameState; }
+    public int PauseDuration { get => _defaultPauseDuration; }
+    private string currentKeyPressed;
+    public string CurrentKeyPressed => currentKeyPressed;
 
-    public static GameState CurrentGameState { get => _currentGameState; }
-    public static int PauseDuration { get => _defaultPauseDuration; }
-
-    public static void StartGame()
+    private void Awake()
     {
+      if (Active != null)
+      {
+        Destroy(Active);
+      }
+
+      Active = this;
+
+      StartGame();
+    }
+
+    void OnEnable()
+    {
+      Keyboard.current.onTextInput += OnKeyPressed;
+    }
+
+    void OnDisable()
+    {
+      Keyboard.current.onTextInput -= OnKeyPressed;
+    }
+
+    private void OnKeyPressed(char value)
+    {
+      if (Keyboard.current.escapeKey.isPressed)
+      {
+        this.currentKeyPressed = "escape";
+      }
+      else if (Keyboard.current.spaceKey.isPressed)
+      {
+        this.currentKeyPressed = "space";
+      }
+      else if (Keyboard.current.enterKey.isPressed)
+      {
+        this.currentKeyPressed = "enter";
+      }
+      else
+      {
+        this.currentKeyPressed = value.ToString();
+      }
+    }
+
+    public async void StartGame()
+    {
+      string keyPress = String.Empty;
+
       if (GameData == null)
       {
         GameData = new GameDataBase();
       }
 
-      bool deciding = true;
+      UIController.Active.WriteLine("Welcome to the world of Unnamed RPG Project!");
+      await Pause(3000);
+      UIController.Active.Clear();
 
-      Console.WriteLine("Welcome to the world of Unnamed RPG Project!");
-      Pause(1600);
-      Console.Clear();
+      UIController.Active.WriteLine("Do you want to create your own party or use the pre-made party?");
+      UIController.Active.WriteLine("[1] Use pre-made party.");
+      UIController.Active.WriteLine("[2] Create my own.");
 
-      Console.WriteLine("Do you want to create your own party or use the pre-made party?");
-      Console.WriteLine("[1] Use pre-made party.");
-      Console.WriteLine("[2] Create my own.");
-
-      while (deciding)
+      await WaitForPlayerKeyPress(() =>
       {
-        switch (Console.ReadKey(true).Key)
+        switch (this.currentKeyPressed)
         {
-          case ConsoleKey.D1:
-            deciding = false;
-            GameData.InitializeData(true);
-            break;
-          case ConsoleKey.D2:
-            deciding = false;
-            GameData.InitializeData(false);
-            break;
-          default: continue;
+          case "1":
+            keyPress = "1";
+            return true;
+          case "2":
+            keyPress = "2";
+            return true;
         }
+
+        return false;
+      });
+
+      switch (keyPress)
+      {
+        case "1":
+          await GameData.InitializeData(true);
+          break;
+        case "2":
+          await GameData.InitializeData(false);
+          break;
       }
 
       SwitchGameState(GameState.Menu);
     }
 
-    public static void SwitchGameState(GameState newState)
+    public void SwitchGameState(GameState newState)
     {
       _currentGameState = newState;
 
-      Console.Clear();
+      UIController.Active.Clear();
 
       switch (_currentGameState)
       {
@@ -81,19 +135,19 @@ namespace RPGGame
       }
     }
 
-    public static void Pause(int duration = 0)
+    public async UniTask Pause(int duration = 0)
     {
       if (duration == 0)
       {
-        Thread.Sleep(_defaultPauseDuration);
+        await UniTask.Delay(_defaultPauseDuration);
       }
       else
       {
-        Thread.Sleep(duration);
+        await UniTask.Delay(duration);
       }
     }
 
-    public static int ConsoleKeyToInt(ConsoleKey keyBind)
+    public int ConsoleKeyToInt(ConsoleKey keyBind)
     {
       switch (keyBind)
       {
@@ -111,36 +165,52 @@ namespace RPGGame
       return -1;
     }
 
-    public static ConsoleKey IntToConsoleKey(int index)
+    public async UniTask WaitForPlayerKeyPress(WaitForPlayerActionDelegate action)
     {
-      switch (index)
+      this.currentKeyPressed = String.Empty;
+
+      await Pause(250);
+
+      while (!action.Invoke())
       {
-        case 1: return ConsoleKey.D1;
-        case 2: return ConsoleKey.D2;
-        case 3: return ConsoleKey.D3;
-        case 4: return ConsoleKey.D4;
-        case 5: return ConsoleKey.D5;
-        case 6: return ConsoleKey.D6;
-        case 7: return ConsoleKey.D7;
-        case 8: return ConsoleKey.D8;
-        case 9: return ConsoleKey.D9;
+        UIController.Active.ScrollToEnd();
+        await UniTask.Yield();
       }
 
-      return ConsoleKey.Escape;
+      this.currentKeyPressed = String.Empty;
     }
 
-    public static void ColorText(ConsoleColor color, string str, bool lineBreak = true)
+    public async UniTask<string> WaitForPlayerInput()
     {
-      Console.ForegroundColor = color;
-      if (lineBreak)
+      await Pause(250);
+      UIController.Active.ShowUserInputField();
+
+      while (String.IsNullOrWhiteSpace(UIController.Active.UserInputField.value) || this.currentKeyPressed != "enter")
       {
-        Console.WriteLine(str);
+        this.currentKeyPressed = String.Empty;
+        UIController.Active.ScrollToEnd();
+        await UniTask.Yield();
       }
-      else
+
+      UIController.Active.HideUserInputField();
+      return UIController.Active.UserInputField.value;
+    }
+
+    public async UniTask PerformActionWhenTrue(WaitForPlayerActionDelegate waitDelegate, Action action)
+    {
+      while (!waitDelegate.Invoke())
       {
-        Console.Write(str);
+        await UniTask.Yield();
       }
-      Console.ForegroundColor = ConsoleColor.White;
+
+      action.Invoke();
+    }
+
+    public async void PerformActionAfterPause(Action action, int duration = 0)
+    {
+      await Pause(duration);
+
+      action.Invoke();
     }
   }
 }

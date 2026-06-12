@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RPGGame
 {
-  class Consumable
+  public class Consumable
   {
     private string _name;
     private int _price;
@@ -35,14 +35,14 @@ namespace RPGGame
 
     public void PrintItemInfo(bool withCost = false)
     {
-      Console.Write($"{this._name} - {this._description}");
+      UIController.Active.Write($"{this._name} - {this._description}");
 
       if (withCost)
       {
-        Console.Write($" - {this._price}G");
+        UIController.Active.Write($" - {this._price}G");
       }
 
-      Console.Write("\n");
+      UIController.Active.Write("\n");
     }
   }
 }

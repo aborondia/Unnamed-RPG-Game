@@ -7,47 +7,49 @@ namespace RPGGame
 {
   static class Menu
   {
-    public static GameDataBase GameData = GameEngine.GameData;
+    public static GameDataBase GameData = GameEngine.Active.GameData;
 
     public static void StartMainMenu()
     {
       UsingMainMenu();
     }
 
-    private static void UsingMainMenu()
+    private static async void UsingMainMenu()
     {
-      Console.WriteLine("Hello Adventurers. What would you like to do?");
-      Console.WriteLine();
-      Console.WriteLine("[1] Go to Adventure Town");
-      Console.WriteLine("[2] Decide where to adventure");
-      Console.WriteLine("[3] View your party");
-      Console.WriteLine("[4] View game stats");
-      Console.WriteLine("[5] Cheat");
+      UIController.Active.WriteLine("Hello Adventurers. What would you like to do?");
+      UIController.Active.WriteLine();
+      UIController.Active.WriteLine("[1] Go to Adventure Town");
+      UIController.Active.WriteLine("[2] Decide where to adventure");
+      UIController.Active.WriteLine("[3] View your party");
+      UIController.Active.WriteLine("[4] View game stats");
+      UIController.Active.WriteLine("[5] Cheat");
 
-      while (GameEngine.CurrentGameState == GameState.Menu)
-      {
-        switch (Console.ReadKey(true).Key)
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
         {
-          case ConsoleKey.D1:
-            GameEngine.SwitchGameState(GameState.Town);
-            return;
-          case ConsoleKey.D2:
-            GameEngine.SwitchGameState(GameState.Map);
-            continue;
-          case ConsoleKey.D3:
-            Console.Clear();
-            PartyInfo.ViewPartyInfo();
-            continue;
-          case ConsoleKey.D4:
-            Console.Clear();
-            PartyInfo.ViewGameStats();
-            continue;
-          case ConsoleKey.D5:
-            Console.Clear();
-            PartyInfo.Cheat();
-            continue;
-        }
-      }
+          switch (GameEngine.Active.CurrentKeyPressed)
+          {
+            case "1":
+              GameEngine.Active.SwitchGameState(GameState.Town);
+              return true;
+            case "2":
+              GameEngine.Active.SwitchGameState(GameState.Map);
+              return true;
+            case "3":
+              UIController.Active.Clear();
+              PartyInfo.ViewPartyInfo();
+              return true;
+            case "4":
+              UIController.Active.Clear();
+              PartyInfo.ViewGameStats();
+              return true;
+            case "5":
+              UIController.Active.Clear();
+              PartyInfo.Cheat();
+              return true;
+          }
+
+          return false;
+        });
     }
   }
 }

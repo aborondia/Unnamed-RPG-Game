@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace RPGGame
 {
-  enum CharacterStatus
+  public enum CharacterStatus
   {
     Alive,
     Dead,
   }
-  class Character
+  public class Character
   {
-    public static GameDataBase GameData = GameEngine.GameData;
+    public static GameDataBase GameData = GameEngine.Active.GameData;
     public bool IsDefending = false;
     protected CharacterStatus _characterStatus = CharacterStatus.Alive;
     protected Dictionary<StatModifierType, int> _statModifiers = new Dictionary<StatModifierType, int>
@@ -143,7 +144,7 @@ namespace RPGGame
 
   }
 
-  class PlayerCharacter : Character
+  public class PlayerCharacter : Character
   {
     private int _maxMana;
     private int _currentMana;
@@ -261,36 +262,36 @@ namespace RPGGame
       }
     }
 
-    public void UpdateExperience(int amount)
+    public async void UpdateExperience(int amount)
     {
       this._experience += amount;
 
       if (this._level < 8 && this._experience >= this._levelChart[this._level + 1])
       {
-        LevelUp();
+        await LevelUp();
       }
     }
 
-    public void LevelUp(bool fastForward = false)
+    public async UniTask LevelUp(bool fastForward = false)
     {
-      int pauseDuration = fastForward ? 1 : GameEngine.PauseDuration;
-      Console.WriteLine(pauseDuration);
-      Console.WriteLine($"{this._name} has leveled up!");
-      GameEngine.Pause(pauseDuration);
+      int pauseDuration = fastForward ? 1 : GameEngine.Active.PauseDuration;
+      UIController.Active.WriteLine(pauseDuration);
+      UIController.Active.WriteLine($"{this._name} has leveled up!");
+      await GameEngine.Active.Pause(pauseDuration);
 
       this._level++;
       PlayerAbility newAbility = this._playerProfession.GetNewAbility(this._level);
       this._specialAbilities.Add(newAbility.KeyBind, newAbility);
 
-      Console.WriteLine($"They have learned {newAbility.Name}");
-      GameEngine.Pause(pauseDuration);
+      UIController.Active.WriteLine($"They have learned {newAbility.Name}");
+      await GameEngine.Active.Pause(pauseDuration);
 
-      Console.WriteLine("They gained the following stats:");
+      UIController.Active.WriteLine("They gained the following stats:");
 
       foreach (var statUp in this._playerProfession.LevelUpStats)
       {
-        Console.WriteLine($"{statUp.Key}+{statUp.Value}");
-        GameEngine.Pause(pauseDuration);
+        UIController.Active.WriteLine($"{statUp.Key}+{statUp.Value}");
+        await GameEngine.Active.Pause(pauseDuration);
         switch (statUp.Key)
         {
           case StatModifierType.Attack:
@@ -325,33 +326,33 @@ namespace RPGGame
     {
       string nextLevelText = this._level < 8 ? this._levelChart[this._level + 1].ToString() : $"{this._name} has reached max level.";
 
-      Console.WriteLine(this._name);
-      Console.WriteLine($"Level: {this._level}");
-      Console.Write($"Current Exp: {this._experience} - Next Level: ");
-      Console.WriteLine(nextLevelText);
+      UIController.Active.WriteLine(this._name);
+      UIController.Active.WriteLine($"Level: {this._level}");
+      UIController.Active.Write($"Current Exp: {this._experience} - Next Level: ");
+      UIController.Active.WriteLine(nextLevelText);
 
       this._mainHand.PrintEquipmentInfo();
-      Console.WriteLine();
+      UIController.Active.WriteLine();
 
       this._offHand.PrintEquipmentInfo();
-      Console.WriteLine();
+      UIController.Active.WriteLine();
 
       this._armor.PrintEquipmentInfo();
-      Console.WriteLine();
+      UIController.Active.WriteLine();
 
-      Console.WriteLine($"Strength: {this._strength}");
-      Console.WriteLine($"Magic: {this._magic}");
-      Console.WriteLine($"Vitality: {this._vitality}");
-      Console.WriteLine($"Will Power: {this._willPower}");
-      Console.WriteLine($"Agility: {this._agility}");
-      Console.WriteLine($"Dexterity: {this._dexterity}");
+      UIController.Active.WriteLine($"Strength: {this._strength}");
+      UIController.Active.WriteLine($"Magic: {this._magic}");
+      UIController.Active.WriteLine($"Vitality: {this._vitality}");
+      UIController.Active.WriteLine($"Will Power: {this._willPower}");
+      UIController.Active.WriteLine($"Agility: {this._agility}");
+      UIController.Active.WriteLine($"Dexterity: {this._dexterity}");
     }
 
     public void PrintBattleInfo()
     {
       HashSet<string> buffDisplays = new HashSet<string>();
 
-      Console.Write($"{this._name} HP: {this._currentHealth}/{this._maxHealth} MP: {this._currentMana}/{this._maxMana}");
+      UIController.Active.Write($"{this._name} HP: {this._currentHealth}/{this._maxHealth} MP: {this._currentMana}/{this._maxMana}");
 
       foreach (var buff in this._temporaryBuffs)
       {
@@ -362,15 +363,15 @@ namespace RPGGame
 
       foreach (string buffDisplay in buffDisplays)
       {
-        Console.Write($" {buffDisplay}");
+        UIController.Active.Write($" {buffDisplay}");
       }
 
-      Console.WriteLine();
+      UIController.Active.WriteLine();
       Console.ForegroundColor = ConsoleColor.White;
     }
   }
 
-  class EnemyCharacter : Character
+  public class EnemyCharacter : Character
   {
     private int _modelIndex;
     private int _experienceReward;
@@ -395,7 +396,7 @@ namespace RPGGame
 
     public void PrintModel()
     {
-      Console.WriteLine(GameData.EnemyModels[this.ModelIndex]);
+      UIController.Active.WriteLine(GameData.EnemyModels[this.ModelIndex]);
     }
 
     public void PrintBuffs()
@@ -411,10 +412,10 @@ namespace RPGGame
 
       foreach (string buffDisplay in buffDisplays)
       {
-        Console.Write($" {buffDisplay}");
+        UIController.Active.Write($" {buffDisplay}");
       }
 
-      Console.WriteLine();
+      UIController.Active.WriteLine();
       Console.ForegroundColor = ConsoleColor.White;
     }
   }

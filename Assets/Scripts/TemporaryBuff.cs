@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RPGGame
 {
-  class TemporaryBuff
+  public class TemporaryBuff
   {
     public int Duration;
     private StatModifier _statModifier;

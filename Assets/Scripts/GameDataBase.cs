@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace RPGGame
 {
-  enum Element
+  public enum Element
   {
     None,
     Fire,
@@ -14,20 +15,20 @@ namespace RPGGame
     Light,
     Dark
   }
-  enum AttackType
+  public enum AttackType
   {
     Physical,
     Magical,
     Almighty,
   }
-  enum TargetType
+  public enum TargetType
   {
     Enemy,
     Ally,
     Self,
     Party
   }
-  class GameDataBase
+  public class GameDataBase
   {
     private Dictionary<ConsoleKey, Consumable> _consumables;
     private List<PlayerProfession> _playerProfessions;
@@ -37,7 +38,6 @@ namespace RPGGame
     private Dictionary<Difficulty, List<EnemyCharacter>> _enemyCharacters;
     private List<EnemyAbility> _enemyAbilities;
     private List<string> _enemyModels;
-
     public List<PlayerCharacter> PlayerCharacters { get => this._playerCharacters; }
     public List<PlayerProfession> PlayerProfessions { get => this._playerProfessions; }
     public List<PlayerAbility> PlayerAbilities { get => this._playerAbilities; }
@@ -45,6 +45,8 @@ namespace RPGGame
     public List<string> EnemyModels { get => this._enemyModels; }
     public List<Equipment> Equipment { get => this._equipment; }
     public Dictionary<ConsoleKey, Consumable> Consumables { get => this._consumables; }
+    private bool initialized = false;
+    public bool Initialized => initialized;
 
     public GameDataBase()
     {
@@ -64,7 +66,7 @@ namespace RPGGame
       this._enemyModels = new List<string>();
     }
 
-    public void InitializeData(bool standardParty)
+    public async UniTask InitializeData(bool standardParty)
     {
       PartyInfo.ResetData();
       this.Consumables.Clear();
@@ -78,34 +80,39 @@ namespace RPGGame
       InitializePlayerAbilities();
       InitializePlayerProfessions();
       InitializeEquipment();
-      InitializePlayerCharacters(standardParty);
+      await InitializePlayerCharacters(standardParty);
       InitializeEnemyAbilities();
       InitializeEnemyCharacters();
     }
 
-    private void InitializePlayerCharacters(bool standardParty)
+    private async UniTask InitializePlayerCharacters(bool standardParty)
     {
-      PlayerCharacter player1 = standardParty ?
-        new PlayerCharacter("Terra", _playerProfessions[2]) :
-        CreateCharacter(1);
+      PlayerCharacter player1;
+      PlayerCharacter player2;
+      PlayerCharacter player3;
+      PlayerCharacter player4;
+
+      if (standardParty)
+      {
+        player1 = new PlayerCharacter("Terra", _playerProfessions[2]);
+        player2 = new PlayerCharacter("Cyan", _playerProfessions[0]);
+        player3 = new PlayerCharacter("Locke", _playerProfessions[1]);
+        player4 = new PlayerCharacter("Celes", _playerProfessions[3]);
+      }
+      else
+      {
+        player1 = await CreateCharacter(1);
+        player2 = await CreateCharacter(2);
+        player3 = await CreateCharacter(3);
+        player4 = await CreateCharacter(4);
+      }
+
       this._playerCharacters.Add(player1);
       PartyInfo.PartyMembers.Add(player1);
-
-      PlayerCharacter player2 = standardParty ?
-        new PlayerCharacter("Cyan", _playerProfessions[0]) :
-        CreateCharacter(2);
       this._playerCharacters.Add(player2);
       PartyInfo.PartyMembers.Add(player2);
-
-      PlayerCharacter player3 = standardParty ?
-        new PlayerCharacter("Locke", _playerProfessions[1]) :
-        CreateCharacter(3);
       this._playerCharacters.Add(player3);
       PartyInfo.PartyMembers.Add(player3);
-
-      PlayerCharacter player4 = standardParty ?
-        new PlayerCharacter("Celes", _playerProfessions[3]) :
-        CreateCharacter(4);
       this._playerCharacters.Add(player4);
       PartyInfo.PartyMembers.Add(player4);
     }
@@ -397,48 +404,48 @@ eViL        /   /     ||--+--|--+-/-|     \   \
       this._equipment.Add(new Equipment(600, EquipmentType.Armor, "Radiant Vestment", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 12), new StatModifier(StatModifierType.Will, 10) }));
     }
 
-    private PlayerCharacter CreateCharacter(int playerNumber)
+    private async UniTask<PlayerCharacter> CreateCharacter(int playerNumber)
     {
-      string name = "";
       PlayerProfession chosenProfession = null;
+      string characterName;
 
-      while (string.IsNullOrEmpty(name))
+      UIController.Active.WriteLine($"Please enter player {playerNumber}'s name:");
+
+      characterName = await GameEngine.Active.WaitForPlayerInput();
+
+      foreach (var player in this._playerCharacters)
       {
-        Console.WriteLine($"Please enter player {playerNumber}'s name:");
-        name = Console.ReadLine();
-
-        foreach (var player in this._playerCharacters)
+        if (player.Name.ToLower() == characterName.ToLower())
         {
-          if (player.Name.ToLower() == name.ToLower())
-          {
-            name = "";
-            Console.WriteLine("There is already a player character with that name.");
-          }
+          UIController.Active.WriteLine("There is already a player character with that name.");
+          return await CreateCharacter(playerNumber);
         }
       }
 
-      Console.WriteLine($"Please choose player {playerNumber}'s class:");
+      UIController.Active.WriteLine($"Please choose player {playerNumber}'s class:");
       int keyBind = 1;
-      bool deciding = true;
-      Dictionary<ConsoleKey, PlayerProfession> availableProfessions = new Dictionary<ConsoleKey, PlayerProfession>();
+      Dictionary<string, PlayerProfession> availableProfessions = new Dictionary<string, PlayerProfession>();
 
       foreach (PlayerProfession playerProfession in this._playerProfessions)
       {
-        availableProfessions.Add(GameEngine.IntToConsoleKey(keyBind), playerProfession);
-        Console.WriteLine($"[{keyBind++}] {playerProfession.Name}");
+        availableProfessions.Add(keyBind.ToString(), playerProfession);
+        UIController.Active.WriteLine($"[{keyBind++}] {playerProfession.Name}");
       }
 
-      while (deciding)
-      {
-        ConsoleKey keyPressed = Console.ReadKey(true).Key;
-        if (availableProfessions.ContainsKey(keyPressed))
+      await GameEngine.Active.WaitForPlayerKeyPress(() =>
         {
-          chosenProfession = availableProfessions[keyPressed];
-          deciding = false;
-        }
-      }
+          string keyPressed = GameEngine.Active.CurrentKeyPressed;
 
-      return new PlayerCharacter(name, chosenProfession);
+          if (availableProfessions.ContainsKey(keyPressed))
+          {
+            chosenProfession = availableProfessions[keyPressed];
+            return true;
+          }
+
+          return false;
+        });
+
+      return new PlayerCharacter(characterName, chosenProfession);
     }
   }
 }

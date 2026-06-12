@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RPGGame
 {
-  enum Effect
+  public enum Effect
   {
     HealHP,
     HealMP,
@@ -34,8 +34,8 @@ namespace RPGGame
           targets[i].CurrentHealth = targets[i].CurrentHealth + healAmount;
         }
 
-        GameEngine.ColorText(ConsoleColor.Green, $"{targets[i].Name} recovered {amountText}.");
-        GameEngine.Pause();
+        UIController.Active.WriteColorText(ConsoleColor.Green, $"{targets[i].Name} recovered {amountText}.");
+        GameEngine.Active.Pause();
       }
     }
 
@@ -44,14 +44,14 @@ namespace RPGGame
       if (target.MaxMana <= target.CurrentMana + healAmount)
       {
         target.CurrentMana = target.MaxMana;
-        Console.WriteLine($"{target.Name} recovered full MP.");
-        GameEngine.Pause();
+        UIController.Active.WriteLine($"{target.Name} recovered full MP.");
+        GameEngine.Active.Pause();
       }
       else
       {
         target.CurrentMana += healAmount;
-        Console.WriteLine($"{target.Name} regained {healAmount} MP.");
-        GameEngine.Pause();
+        UIController.Active.WriteLine($"{target.Name} regained {healAmount} MP.");
+        GameEngine.Active.Pause();
       }
     }
 
@@ -66,14 +66,14 @@ namespace RPGGame
 
         if (damage[i] <= 0)
         {
-          Console.WriteLine($"{targets[i].Name} dodged the attack!");
-          GameEngine.Pause();
+          UIController.Active.WriteLine($"{targets[i].Name} dodged the attack!");
+          GameEngine.Active.Pause();
           continue;
         }
 
         targets[i].CurrentHealth -= damage[i];
-        GameEngine.ColorText(ConsoleColor.Red, $"{targets[i].Name} received {damage[i]} damage!");
-        GameEngine.Pause();
+        UIController.Active.WriteColorText(ConsoleColor.Red, $"{targets[i].Name} received {damage[i]} damage!");
+        GameEngine.Active.Pause();
 
         if (targets[i].CurrentHealth <= 0)
         {
@@ -86,8 +86,8 @@ namespace RPGGame
             PartyInfo.UpdateDeathCount();
           }
 
-          GameEngine.ColorText(ConsoleColor.DarkRed, $"{targets[i].Name} has been slain!");
-          GameEngine.Pause();
+          UIController.Active.WriteColorText(ConsoleColor.DarkRed, $"{targets[i].Name} has been slain!");
+          GameEngine.Active.Pause();
         }
       }
     }
