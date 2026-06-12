@@ -1,5 +1,7 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
+using VContainer;
 
 namespace RPGGame
 {
@@ -10,31 +12,33 @@ namespace RPGGame
     Hard,
     VeryHard
   }
-  public static class Map
+  public class Map 
   {
-    public static GameDataBase GameData = GameEngine.Active.GameData;
+    [Inject] private GameEngine gameEngine;
+    [Inject] private UIController uiController;
+    [Inject] private GameDataBase GameData;
 
-    public static async void StartMap()
+    public async void StartMap()
     {
       string keyPressed = String.Empty;
-      UIController.Active.WriteLine("Where would you like to look for monsters to slay?");
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("[1] Forest of Illusion - Easy");
-      UIController.Active.WriteLine("[2] Caves of Despair - Average");
-      UIController.Active.WriteLine("[3] Lair of Vile Beasts - Hard");
-      UIController.Active.WriteLine("[4] The Underworld - Very Hard");
-      UIController.Active.WriteLine("[Esc] Return to menu");
+      this.uiController.WriteLine("Where would you like to look for monsters to slay?");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("[1] Forest of Illusion - Easy");
+      this.uiController.WriteLine("[2] Caves of Despair - Average");
+      this.uiController.WriteLine("[3] Lair of Vile Beasts - Hard");
+      this.uiController.WriteLine("[4] The Underworld - Very Hard");
+      this.uiController.WriteLine("[Esc] Return to menu");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
-        switch (GameEngine.Active.CurrentKeyPressed)
+        switch (this.gameEngine.CurrentKeyPressed)
         {
           case "1":
           case "2":
           case "3":
           case "4":
           case "escape":
-            keyPressed = GameEngine.Active.CurrentKeyPressed;
+            keyPressed = this.gameEngine.CurrentKeyPressed;
             return true;
         }
 
@@ -44,31 +48,31 @@ namespace RPGGame
       switch (keyPressed)
       {
         case "1":
-          GameEngine.Active.Difficulty = Difficulty.Easy;
-          UIController.Active.WriteLine("You explore The Forest of Illusion...");
-          await GameEngine.Active.Pause(1600);
-          GameEngine.Active.SwitchGameState(GameState.Battle);
+          this.gameEngine.Difficulty = Difficulty.Easy;
+          this.uiController.WriteLine("You explore The Forest of Illusion...");
+          await this.gameEngine.Pause(1600);
+          this.gameEngine.SwitchGameState(GameState.Battle);
           break;
         case "2":
-          UIController.Active.WriteLine("You explore The Caves of Despair...");
-          await GameEngine.Active.Pause(1600);
-          GameEngine.Active.Difficulty = Difficulty.Average;
-          GameEngine.Active.SwitchGameState(GameState.Battle);
+          this.uiController.WriteLine("You explore The Caves of Despair...");
+          await this.gameEngine.Pause(1600);
+          this.gameEngine.Difficulty = Difficulty.Average;
+          this.gameEngine.SwitchGameState(GameState.Battle);
           break;
         case "3":
-          GameEngine.Active.Difficulty = Difficulty.Hard;
-          UIController.Active.WriteLine("You explore The Lair of Vile Beasts...");
-          await GameEngine.Active.Pause(1600);
-          GameEngine.Active.SwitchGameState(GameState.Battle);
+          this.gameEngine.Difficulty = Difficulty.Hard;
+          this.uiController.WriteLine("You explore The Lair of Vile Beasts...");
+          await this.gameEngine.Pause(1600);
+          this.gameEngine.SwitchGameState(GameState.Battle);
           break;
         case "4":
-          UIController.Active.WriteLine("You explore The Underworld...");
-          GameEngine.Active.Difficulty = Difficulty.VeryHard;
-          await GameEngine.Active.Pause(1600);
-          GameEngine.Active.SwitchGameState(GameState.Battle);
+          this.uiController.WriteLine("You explore The Underworld...");
+          this.gameEngine.Difficulty = Difficulty.VeryHard;
+          await this.gameEngine.Pause(1600);
+          this.gameEngine.SwitchGameState(GameState.Battle);
           break;
         case "escape":
-          GameEngine.Active.SwitchGameState(GameState.Menu);
+          this.gameEngine.SwitchGameState(GameState.Menu);
           break;
       }
     }

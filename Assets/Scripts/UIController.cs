@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using RPGGame;
 using UnityEngine;
 using UnityEngine.UIElements;
-
+using VContainer;
 public class UIController : MonoBehaviour
 {
-    public static UIController Active;
+    [Inject] private IObjectResolver resolver;
     [SerializeField] private UIDocument uiDocument;
     [SerializeField] private VisualTreeAsset consoleLineTemplate;
     private Queue<VisualElement> consoleLines = new Queue<VisualElement>();
@@ -19,13 +19,6 @@ public class UIController : MonoBehaviour
 
     private void Awake()
     {
-        if (Active != null)
-        {
-            Destroy(Active);
-        }
-
-        Active = this;
-
         SetupUI();
     }
 
@@ -50,7 +43,7 @@ public class UIController : MonoBehaviour
         label.AddToClassList(GetFontColorSelector(ConsoleColor.White));
 
         label.text = value;
-        GameEngine.Active.PerformActionAfterPause(() => ScrollToEnd(), 50);
+        this.resolver.Resolve<GameEngine>().PerformActionAfterPause(() => ScrollToEnd(), 50);
         return label;
     }
 
@@ -118,6 +111,11 @@ public class UIController : MonoBehaviour
 
         labelContainer = consoleLine.Q<VisualElement>("label-container");
 
+        if (labelContainer == null)
+        {
+            return GetConsoleLabel(newLine);
+        }
+        
         if (createNewElement)
         {
             labelContainer.Clear();

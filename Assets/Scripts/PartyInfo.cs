@@ -2,37 +2,44 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VContainer;
 
 namespace RPGGame
 {
-  public static class PartyInfo
+  public class PartyInfo 
   {
-    public static GameDataBase GameData = GameEngine.Active.GameData;
-    private static int _startingGold = 100;
-    private static List<PlayerCharacter> _partyMembers = new List<PlayerCharacter>();
-    private static int _gold = _startingGold;
-    private static Dictionary<Consumable, int> _usableItems = new Dictionary<Consumable, int>();
-    private static DateTime _gameStarted = DateTime.Now;
-    private static int _totalEnemiesKilled = 0;
-    private static int _totalExperienceAccrued = 0;
-    private static int _totalGoldAccrued = 100;
-    private static int _partyMembersSlain = 0;
+    [Inject] private IObjectResolver resolver;
+    [Inject] private GameEngine gameEngine;
+    [Inject] private UIController uiController;
+    private int _startingGold = 100;
+    private List<PlayerCharacter> _partyMembers = new List<PlayerCharacter>();
+    private int _gold;
+    private Dictionary<Consumable, int> _usableItems = new Dictionary<Consumable, int>();
+    private DateTime _gameStarted = DateTime.Now;
+    private int _totalEnemiesKilled = 0;
+    private int _totalExperienceAccrued = 0;
+    private int _totalGoldAccrued = 100;
+    private int _partyMembersSlain = 0;
+    public List<PlayerCharacter> PartyMembers { get => _partyMembers; }
+    public int Gold { get => _gold; set => _gold += value; }
+    public Dictionary<Consumable, int> UsableItems { get => _usableItems; }
 
-    public static List<PlayerCharacter> PartyMembers { get => _partyMembers; }
-    public static int Gold { get => _gold; set => _gold += value; }
-    public static Dictionary<Consumable, int> UsableItems { get => _usableItems; }
+    public PartyInfo()
+    {
+      this._gold = this._startingGold;
+    }
 
-    public static void ModifyGold(int amount)
+    public void ModifyGold(int amount)
     {
       _gold += amount;
     }
 
-    public static void EmptyGold()
+    public void EmptyGold()
     {
       _gold = 0;
     }
 
-    public static void AddItem(Consumable item, int amount)
+    public void AddItem(Consumable item, int amount)
     {
       if (_usableItems.ContainsKey(item))
       {
@@ -44,14 +51,14 @@ namespace RPGGame
       }
     }
 
-    public static async void ViewPartyInfo()
+    public async void ViewPartyInfo()
     {
       int keyIndex = 1;
 
-      UIController.Active.WriteLine($"Party Gold: {_gold}");
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("For detailed character information press the corresponding key.");
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine($"Party Gold: {_gold}");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("For detailed character information press the corresponding key.");
+      this.uiController.WriteLine();
 
       foreach (PlayerCharacter character in _partyMembers)
       {
@@ -60,26 +67,26 @@ namespace RPGGame
           Console.ForegroundColor = ConsoleColor.Gray;
         }
 
-        UIController.Active.WriteColorText(ConsoleColor.Magenta, $"[{keyIndex++}]", true);
-        UIController.Active.Write($"{character.Name} - HP: {character.CurrentHealth}/{character.MaxHealth} MP: {character.CurrentMana}/{character.MaxMana}");
+        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{keyIndex++}]", true);
+        this.uiController.Write($"{character.Name} - HP: {character.CurrentHealth}/{character.MaxHealth} MP: {character.CurrentMana}/{character.MaxMana}");
         Console.ForegroundColor = ConsoleColor.White;
       }
-      UIController.Active.WriteLine("[Esc]");
-      UIController.Active.Write("Return to menu");
+      this.uiController.WriteLine("[Esc]");
+      this.uiController.Write("Return to menu");
 
       if (_usableItems.Count > 0)
       {
-        UIController.Active.WriteLine();
-        UIController.Active.WriteLine("Inventory:");
+        this.uiController.WriteLine();
+        this.uiController.WriteLine("Inventory:");
         foreach (var item in _usableItems)
         {
-          UIController.Active.WriteLine($"{item.Key.Name}x{item.Value}");
+          this.uiController.WriteLine($"{item.Key.Name}x{item.Value}");
         }
       }
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
            {
-             switch (GameEngine.Active.CurrentKeyPressed)
+             switch (this.gameEngine.CurrentKeyPressed)
              {
                case "1":
                  ViewCharacterStatus(_partyMembers[0]);
@@ -94,8 +101,8 @@ namespace RPGGame
                  ViewCharacterStatus(_partyMembers[3]);
                  return true;
                case "escape":
-                 UIController.Active.Clear();
-                 Menu.StartMainMenu();
+                 this.uiController.Clear();
+                 this.resolver.Resolve<Menu>().StartMainMenu();
                  return true;
              }
 
@@ -103,18 +110,18 @@ namespace RPGGame
            });
     }
 
-    private static async void ViewCharacterStatus(PlayerCharacter character)
+    private async void ViewCharacterStatus(PlayerCharacter character)
     {
-      UIController.Active.Clear();
+      this.uiController.Clear();
       character.PrintStats();
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("Press escape to return to party menu.");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("Press escape to return to party menu.");
 
       ConsoleKey keyPressed = Console.ReadKey(true).Key;
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
-          if (GameEngine.Active.CurrentKeyPressed == "escape")
+          if (this.gameEngine.CurrentKeyPressed == "escape")
           {
             return true;
           }
@@ -122,25 +129,25 @@ namespace RPGGame
           return false;
         });
 
-      UIController.Active.Clear();
-      PartyInfo.ViewPartyInfo();
+      this.uiController.Clear();
+      ViewPartyInfo();
     }
 
-    public static async void ViewGameStats()
+    public async void ViewGameStats()
     {
       TimeSpan timePlayed = DateTime.Now - _gameStarted;
       string timePlayedText = $"H:{timePlayed.Hours} M:{timePlayed.Minutes} S:{timePlayed.Seconds}";
-      UIController.Active.WriteLine($"Total Enemies Slain: {_totalEnemiesKilled}");
-      UIController.Active.WriteLine($"Total Experience Accrued: {_totalExperienceAccrued}");
-      UIController.Active.WriteLine($"Total Gold Accrued: {_totalGoldAccrued}");
-      UIController.Active.WriteLine($"Total Times a Party Member Has Been Slain: {_partyMembersSlain}");
-      UIController.Active.WriteLine(timePlayedText);
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("Press escape to return to menu.");
+      this.uiController.WriteLine($"Total Enemies Slain: {_totalEnemiesKilled}");
+      this.uiController.WriteLine($"Total Experience Accrued: {_totalExperienceAccrued}");
+      this.uiController.WriteLine($"Total Gold Accrued: {_totalGoldAccrued}");
+      this.uiController.WriteLine($"Total Times a Party Member Has Been Slain: {_partyMembersSlain}");
+      this.uiController.WriteLine(timePlayedText);
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("Press escape to return to menu.");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
          {
-           if (GameEngine.Active.CurrentKeyPressed == "escape")
+           if (this.gameEngine.CurrentKeyPressed == "escape")
            {
              return true;
            }
@@ -148,39 +155,39 @@ namespace RPGGame
            return false;
          });
 
-      UIController.Active.Clear();
-      Menu.StartMainMenu();
+      this.uiController.Clear();
+      this.resolver.Resolve<Menu>().StartMainMenu();
     }
 
-    public static void UpdateDeathCount()
+    public void UpdateDeathCount()
     {
       _partyMembersSlain++;
     }
 
-    public static void UpdateGameStats(int experience, int gold, bool enemyKilled = true)
+    public void UpdateGameStats(int experience, int gold, bool enemyKilled = true)
     {
       _totalExperienceAccrued += experience;
       _totalGoldAccrued += gold;
       _totalEnemiesKilled += enemyKilled ? 1 : 0;
     }
 
-    public static async void Cheat()
+    public async void Cheat()
     {
       string keyPressed = String.Empty;
-      UIController.Active.WriteLine("[1] Max Gold");
-      UIController.Active.WriteLine("[2] Max Character Levels");
-      UIController.Active.WriteLine("[3] Armed and Dangerous");
-      UIController.Active.WriteLine("[Esc] On second thought...");
+      this.uiController.WriteLine("[1] Max Gold");
+      this.uiController.WriteLine("[2] Max Character Levels");
+      this.uiController.WriteLine("[3] Armed and Dangerous");
+      this.uiController.WriteLine("[Esc] On second thought...");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
-          switch (GameEngine.Active.CurrentKeyPressed)
+          switch (this.gameEngine.CurrentKeyPressed)
           {
             case "1":
             case "2":
             case "3":
             case "escape":
-              keyPressed = GameEngine.Active.CurrentKeyPressed;
+              keyPressed = this.gameEngine.CurrentKeyPressed;
               return true;
           }
           return false;
@@ -191,10 +198,10 @@ namespace RPGGame
         case "1":
           EmptyGold();
           ModifyGold(1000000);
-          UIController.Active.WriteLine("Happy spending.");
-          GameEngine.Active.PerformActionAfterPause(() =>
+          this.uiController.WriteLine("Happy spending.");
+          this.gameEngine.PerformActionAfterPause(() =>
           {
-            UIController.Active.Clear();
+            this.uiController.Clear();
             Cheat();
           });
           break;
@@ -203,10 +210,10 @@ namespace RPGGame
           {
             await LevelUpToMax(character);
           }
-          UIController.Active.WriteLine("You're so strong.");
-          GameEngine.Active.PerformActionAfterPause(() =>
+          this.uiController.WriteLine("You're so strong.");
+          this.gameEngine.PerformActionAfterPause(() =>
           {
-            UIController.Active.Clear();
+            this.uiController.Clear();
             Cheat();
           }, 3000);
 
@@ -216,44 +223,44 @@ namespace RPGGame
           {
             if (character.PlayerProfession is Warrior)
             {
-              character.EquipItem(GameData.Equipment[2]);
-              character.EquipItem(GameData.Equipment[5]);
-              character.EquipItem(GameData.Equipment[8]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[2]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[5]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[8]);
             }
             if (character.PlayerProfession is Rouge)
             {
-              character.EquipItem(GameData.Equipment[11]);
-              character.EquipItem(GameData.Equipment[14]);
-              character.EquipItem(GameData.Equipment[17]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[11]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[14]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[17]);
             }
             if (character.PlayerProfession is Wizard)
             {
-              character.EquipItem(GameData.Equipment[20]);
-              character.EquipItem(GameData.Equipment[23]);
-              character.EquipItem(GameData.Equipment[26]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[20]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[23]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[26]);
             }
             if (character.PlayerProfession is Cleric)
             {
-              character.EquipItem(GameData.Equipment[29]);
-              character.EquipItem(GameData.Equipment[32]);
-              character.EquipItem(GameData.Equipment[35]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[29]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[32]);
+              character.EquipItem(this.resolver.Resolve<GameDataBase>().Equipment[35]);
             }
           }
-          UIController.Active.WriteLine("Looking good in that fancy equipment.");
-          GameEngine.Active.PerformActionAfterPause(() =>
+          this.uiController.WriteLine("Looking good in that fancy equipment.");
+          this.gameEngine.PerformActionAfterPause(() =>
           {
-            UIController.Active.Clear();
+            this.uiController.Clear();
             Cheat();
           });
           break;
         case "escape":
-          UIController.Active.Clear();
-          Menu.StartMainMenu();
+          this.uiController.Clear();
+          this.resolver.Resolve<Menu>().StartMainMenu();
           break;
       }
     }
 
-    private async static UniTask LevelUpToMax(PlayerCharacter character)
+    private async UniTask LevelUpToMax(PlayerCharacter character)
     {
       if (character.Level < 8)
       {
@@ -262,7 +269,7 @@ namespace RPGGame
       }
     }
 
-    public static void ResetData()
+    public void ResetData()
     {
       _partyMembers.Clear();
       _usableItems.Clear();

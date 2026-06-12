@@ -12,7 +12,9 @@ namespace RPGGame
   }
   public class Character
   {
-    public static GameDataBase GameData = GameEngine.Active.GameData;
+    protected GameEngine gameEngine;
+    protected UIController uiController => gameEngine.UIController;
+    protected GameDataBase gameData => gameEngine.GameData;
     public bool IsDefending = false;
     protected CharacterStatus _characterStatus = CharacterStatus.Alive;
     protected Dictionary<StatModifierType, int> _statModifiers = new Dictionary<StatModifierType, int>
@@ -56,8 +58,9 @@ namespace RPGGame
     public int Agility { get => this._agility + this._statModifiers[StatModifierType.Agility]; }
     public int Dexterity { get => this._dexterity + this._statModifiers[StatModifierType.Dexterity]; }
 
-    public Character(string name, int maxHealth, int strength, int vitality, int magic, int will, int agility, int dexterity, HashSet<Element> resistances, HashSet<Element> weaknesses)
+    public Character(GameEngine gameEngine, string name, int maxHealth, int strength, int vitality, int magic, int will, int agility, int dexterity, HashSet<Element> resistances, HashSet<Element> weaknesses)
     {
+      this.gameEngine = gameEngine;
       this._name = name;
       this._maxHealth = maxHealth;
       this._currentHealth = maxHealth;
@@ -180,8 +183,8 @@ namespace RPGGame
     public Equipment Armor { get => this._armor; }
 
     public PlayerCharacter
-      (string name, PlayerProfession playerProfession, HashSet<Element> resistances = null, HashSet<Element> weaknesses = null) : base
-      (name, playerProfession.BaseHealth, playerProfession.BaseStrength, playerProfession.BaseVitality, playerProfession.BaseMagic, playerProfession.BaseWill, playerProfession.BaseAgility, playerProfession.BaseDexterity, resistances, weaknesses)
+      (GameEngine gameEngine, string name, PlayerProfession playerProfession, HashSet<Element> resistances = null, HashSet<Element> weaknesses = null) : base
+      (gameEngine, name, playerProfession.BaseHealth, playerProfession.BaseStrength, playerProfession.BaseVitality, playerProfession.BaseMagic, playerProfession.BaseWill, playerProfession.BaseAgility, playerProfession.BaseDexterity, resistances, weaknesses)
     {
       this._maxMana = playerProfession.BaseMana;
       this._currentMana = this._maxMana;
@@ -189,9 +192,9 @@ namespace RPGGame
       this._specialAbilities = new Dictionary<ConsoleKey, PlayerAbility>();
 
       this._specialAbilities.Add(playerProfession.GetNewAbility(1).KeyBind, playerProfession.GetNewAbility(1));
-      EquipItem(GameData.Equipment[playerProfession.StartingMainHand]);
-      EquipItem(GameData.Equipment[playerProfession.StartingOffHand]);
-      EquipItem(GameData.Equipment[playerProfession.StartingArmor]);
+      EquipItem(gameData.Equipment[playerProfession.StartingMainHand]);
+      EquipItem(gameData.Equipment[playerProfession.StartingOffHand]);
+      EquipItem(gameData.Equipment[playerProfession.StartingArmor]);
     }
 
     public void EquipItem(Equipment equipmentToEquip)
@@ -274,24 +277,24 @@ namespace RPGGame
 
     public async UniTask LevelUp(bool fastForward = false)
     {
-      int pauseDuration = fastForward ? 1 : GameEngine.Active.PauseDuration;
-      UIController.Active.WriteLine(pauseDuration);
-      UIController.Active.WriteLine($"{this._name} has leveled up!");
-      await GameEngine.Active.Pause(pauseDuration);
+      int pauseDuration = fastForward ? 1 : this.gameEngine.PauseDuration;
+      this.uiController.WriteLine(pauseDuration);
+      this.uiController.WriteLine($"{this._name} has leveled up!");
+      await this.gameEngine.Pause(pauseDuration);
 
       this._level++;
       PlayerAbility newAbility = this._playerProfession.GetNewAbility(this._level);
       this._specialAbilities.Add(newAbility.KeyBind, newAbility);
 
-      UIController.Active.WriteLine($"They have learned {newAbility.Name}");
-      await GameEngine.Active.Pause(pauseDuration);
+      this.uiController.WriteLine($"They have learned {newAbility.Name}");
+      await this.gameEngine.Pause(pauseDuration);
 
-      UIController.Active.WriteLine("They gained the following stats:");
+      this.uiController.WriteLine("They gained the following stats:");
 
       foreach (var statUp in this._playerProfession.LevelUpStats)
       {
-        UIController.Active.WriteLine($"{statUp.Key}+{statUp.Value}");
-        await GameEngine.Active.Pause(pauseDuration);
+        this.uiController.WriteLine($"{statUp.Key}+{statUp.Value}");
+        await this.gameEngine.Pause(pauseDuration);
         switch (statUp.Key)
         {
           case StatModifierType.Attack:
@@ -326,33 +329,33 @@ namespace RPGGame
     {
       string nextLevelText = this._level < 8 ? this._levelChart[this._level + 1].ToString() : $"{this._name} has reached max level.";
 
-      UIController.Active.WriteLine(this._name);
-      UIController.Active.WriteLine($"Level: {this._level}");
-      UIController.Active.Write($"Current Exp: {this._experience} - Next Level: ");
-      UIController.Active.WriteLine(nextLevelText);
+      this.uiController.WriteLine(this._name);
+      this.uiController.WriteLine($"Level: {this._level}");
+      this.uiController.Write($"Current Exp: {this._experience} - Next Level: ");
+      this.uiController.WriteLine(nextLevelText);
 
       this._mainHand.PrintEquipmentInfo();
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
 
       this._offHand.PrintEquipmentInfo();
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
 
       this._armor.PrintEquipmentInfo();
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
 
-      UIController.Active.WriteLine($"Strength: {this._strength}");
-      UIController.Active.WriteLine($"Magic: {this._magic}");
-      UIController.Active.WriteLine($"Vitality: {this._vitality}");
-      UIController.Active.WriteLine($"Will Power: {this._willPower}");
-      UIController.Active.WriteLine($"Agility: {this._agility}");
-      UIController.Active.WriteLine($"Dexterity: {this._dexterity}");
+      this.uiController.WriteLine($"Strength: {this._strength}");
+      this.uiController.WriteLine($"Magic: {this._magic}");
+      this.uiController.WriteLine($"Vitality: {this._vitality}");
+      this.uiController.WriteLine($"Will Power: {this._willPower}");
+      this.uiController.WriteLine($"Agility: {this._agility}");
+      this.uiController.WriteLine($"Dexterity: {this._dexterity}");
     }
 
     public void PrintBattleInfo()
     {
       HashSet<string> buffDisplays = new HashSet<string>();
 
-      UIController.Active.Write($"{this._name} HP: {this._currentHealth}/{this._maxHealth} MP: {this._currentMana}/{this._maxMana}");
+      this.uiController.Write($"{this._name} HP: {this._currentHealth}/{this._maxHealth} MP: {this._currentMana}/{this._maxMana}");
 
       foreach (var buff in this._temporaryBuffs)
       {
@@ -363,10 +366,10 @@ namespace RPGGame
 
       foreach (string buffDisplay in buffDisplays)
       {
-        UIController.Active.Write($" {buffDisplay}");
+        this.uiController.Write($" {buffDisplay}");
       }
 
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
       Console.ForegroundColor = ConsoleColor.White;
     }
   }
@@ -385,8 +388,8 @@ namespace RPGGame
     public Dictionary<EnemyAbility, int> EnemyBehaviour { get => this._enemyBehaviour; }
 
     public EnemyCharacter
-      (string name, int maxHealth, int strength, int vitality, int magic, int will, int agility, int dexterity, int experienceReward, int goldReward, HashSet<Element> resistances, HashSet<Element> weaknesses, Dictionary<EnemyAbility, int> enemyBehaviour, int model) : base
-      (name, maxHealth, strength, vitality, magic, will, agility, dexterity, resistances, weaknesses)
+      (GameEngine gameEngine, string name, int maxHealth, int strength, int vitality, int magic, int will, int agility, int dexterity, int experienceReward, int goldReward, HashSet<Element> resistances, HashSet<Element> weaknesses, Dictionary<EnemyAbility, int> enemyBehaviour, int model) : base
+      (gameEngine, name, maxHealth, strength, vitality, magic, will, agility, dexterity, resistances, weaknesses)
     {
       this._experienceReward = experienceReward;
       this._goldReward = goldReward;
@@ -396,7 +399,7 @@ namespace RPGGame
 
     public void PrintModel()
     {
-      UIController.Active.WriteLine(GameData.EnemyModels[this.ModelIndex]);
+      this.uiController.WriteLine(gameData.EnemyModels[this.ModelIndex]);
     }
 
     public void PrintBuffs()
@@ -412,10 +415,10 @@ namespace RPGGame
 
       foreach (string buffDisplay in buffDisplays)
       {
-        UIController.Active.Write($" {buffDisplay}");
+        this.uiController.Write($" {buffDisplay}");
       }
 
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
       Console.ForegroundColor = ConsoleColor.White;
     }
   }

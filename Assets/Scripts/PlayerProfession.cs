@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+using VContainer;
 
 namespace RPGGame
 {
   public class PlayerProfession
   {
-    public static GameDataBase GameData = GameEngine.Active.GameData;
+    [Inject] protected GameEngine gameEngine;
+    protected GameDataBase gameData;
     protected string _name;
     protected Dictionary<int, PlayerAbility> _learnableAbilities;
     protected Dictionary<StatModifierType, int> _levelUpStats = new Dictionary<StatModifierType, int>();
@@ -36,22 +36,15 @@ namespace RPGGame
     public int BaseAgility { get => this._baseAgility; }
     public int BaseDexterity { get => this._baseDexterity; }
 
-    public PlayerProfession()
+    public PlayerProfession(GameDataBase gameData)
     {
+      this.gameData = gameData;
       this._learnableAbilities = new Dictionary<int, PlayerAbility>();
     }
 
     public PlayerAbility GetNewAbility(int id)
     {
-      if (this._learnableAbilities.ContainsKey(id))
-      {
-        return this._learnableAbilities[id];
-      }
-      else
-      {
-        Debug.Log("fuck");
-        return this._learnableAbilities.Last().Value;
-      }
+      return this._learnableAbilities[id];
     }
 
     protected void PopulateLevelUpStats()
@@ -71,7 +64,7 @@ namespace RPGGame
   {
 
     public Dictionary<int, PlayerAbility> LearnableAbilities { get => this._learnableAbilities; }
-    public Warrior()
+    public Warrior(GameDataBase gameData) : base(gameData)
     {
       this._name = "Warrior";
       this._startingMainHand = 0;
@@ -85,14 +78,14 @@ namespace RPGGame
       this._baseWill = 5;
       this._baseAgility = 8;
       this._baseDexterity = 8;
-      this._learnableAbilities.Add(1, GameData.PlayerAbilities[1]);
-      this._learnableAbilities.Add(2, GameData.PlayerAbilities[2]);
-      this._learnableAbilities.Add(3, GameData.PlayerAbilities[3]);
-      this._learnableAbilities.Add(4, GameData.PlayerAbilities[4]);
-      this._learnableAbilities.Add(5, GameData.PlayerAbilities[5]);
-      this._learnableAbilities.Add(6, GameData.PlayerAbilities[6]);
-      this._learnableAbilities.Add(7, GameData.PlayerAbilities[7]);
-      this._learnableAbilities.Add(8, GameData.PlayerAbilities[8]);
+      this._learnableAbilities.Add(1, gameData.PlayerAbilities[1]);
+      this._learnableAbilities.Add(2, gameData.PlayerAbilities[2]);
+      this._learnableAbilities.Add(3, gameData.PlayerAbilities[3]);
+      this._learnableAbilities.Add(4, gameData.PlayerAbilities[4]);
+      this._learnableAbilities.Add(5, gameData.PlayerAbilities[5]);
+      this._learnableAbilities.Add(6, gameData.PlayerAbilities[6]);
+      this._learnableAbilities.Add(7, gameData.PlayerAbilities[7]);
+      this._learnableAbilities.Add(8, gameData.PlayerAbilities[8]);
       PopulateLevelUpStats();
     }
   }
@@ -100,7 +93,7 @@ namespace RPGGame
   public class Rouge : PlayerProfession
   {
     public Dictionary<int, PlayerAbility> LearnableAbilities { get => this._learnableAbilities; }
-    public Rouge()
+    public Rouge(GameDataBase gameData) : base(gameData)
     {
       this._name = "Rouge";
       this._startingMainHand = 9;
@@ -114,14 +107,14 @@ namespace RPGGame
       this._baseWill = 8;
       this._baseAgility = 20;
       this._baseDexterity = 20;
-      this._learnableAbilities.Add(1, GameData.PlayerAbilities[9]);
-      this._learnableAbilities.Add(2, GameData.PlayerAbilities[10]);
-      this._learnableAbilities.Add(3, GameData.PlayerAbilities[11]);
-      this._learnableAbilities.Add(4, GameData.PlayerAbilities[12]);
-      this._learnableAbilities.Add(5, GameData.PlayerAbilities[13]);
-      this._learnableAbilities.Add(6, GameData.PlayerAbilities[14]);
-      this._learnableAbilities.Add(7, GameData.PlayerAbilities[15]);
-      this._learnableAbilities.Add(8, GameData.PlayerAbilities[16]);
+      this._learnableAbilities.Add(1, gameData.PlayerAbilities[9]);
+      this._learnableAbilities.Add(2, gameData.PlayerAbilities[10]);
+      this._learnableAbilities.Add(3, gameData.PlayerAbilities[11]);
+      this._learnableAbilities.Add(4, gameData.PlayerAbilities[12]);
+      this._learnableAbilities.Add(5, gameData.PlayerAbilities[13]);
+      this._learnableAbilities.Add(6, gameData.PlayerAbilities[14]);
+      this._learnableAbilities.Add(7, gameData.PlayerAbilities[15]);
+      this._learnableAbilities.Add(8, gameData.PlayerAbilities[16]);
       PopulateLevelUpStats();
     }
   }
@@ -129,7 +122,7 @@ namespace RPGGame
   public class Wizard : PlayerProfession
   {
     public Dictionary<int, PlayerAbility> LearnableAbilities { get => this._learnableAbilities; }
-    public Wizard()
+    public Wizard(GameDataBase gameData) : base(gameData)
     {
       this._name = "Wizard";
       this._startingMainHand = 18;
@@ -143,14 +136,14 @@ namespace RPGGame
       this._baseWill = 15;
       this._baseAgility = 10;
       this._baseDexterity = 12;
-      this._learnableAbilities.Add(1, GameData.PlayerAbilities[17]);
-      this._learnableAbilities.Add(2, GameData.PlayerAbilities[18]);
-      this._learnableAbilities.Add(3, GameData.PlayerAbilities[19]);
-      this._learnableAbilities.Add(4, GameData.PlayerAbilities[20]);
-      this._learnableAbilities.Add(5, GameData.PlayerAbilities[21]);
-      this._learnableAbilities.Add(6, GameData.PlayerAbilities[22]);
-      this._learnableAbilities.Add(7, GameData.PlayerAbilities[23]);
-      this._learnableAbilities.Add(8, GameData.PlayerAbilities[24]);
+      this._learnableAbilities.Add(1, gameData.PlayerAbilities[17]);
+      this._learnableAbilities.Add(2, gameData.PlayerAbilities[18]);
+      this._learnableAbilities.Add(3, gameData.PlayerAbilities[19]);
+      this._learnableAbilities.Add(4, gameData.PlayerAbilities[20]);
+      this._learnableAbilities.Add(5, gameData.PlayerAbilities[21]);
+      this._learnableAbilities.Add(6, gameData.PlayerAbilities[22]);
+      this._learnableAbilities.Add(7, gameData.PlayerAbilities[23]);
+      this._learnableAbilities.Add(8, gameData.PlayerAbilities[24]);
       PopulateLevelUpStats();
     }
   }
@@ -158,7 +151,7 @@ namespace RPGGame
   public class Cleric : PlayerProfession
   {
     public Dictionary<int, PlayerAbility> LearnableAbilities { get => this._learnableAbilities; }
-    public Cleric()
+    public Cleric(GameDataBase gameData) : base(gameData)
     {
       this._name = "Cleric";
       this._startingMainHand = 27;
@@ -172,14 +165,14 @@ namespace RPGGame
       this._baseWill = 25;
       this._baseAgility = 10;
       this._baseDexterity = 10;
-      this._learnableAbilities.Add(1, GameData.PlayerAbilities[25]);
-      this._learnableAbilities.Add(2, GameData.PlayerAbilities[26]);
-      this._learnableAbilities.Add(3, GameData.PlayerAbilities[27]);
-      this._learnableAbilities.Add(4, GameData.PlayerAbilities[28]);
-      this._learnableAbilities.Add(5, GameData.PlayerAbilities[29]);
-      this._learnableAbilities.Add(6, GameData.PlayerAbilities[30]);
-      this._learnableAbilities.Add(7, GameData.PlayerAbilities[31]);
-      this._learnableAbilities.Add(8, GameData.PlayerAbilities[32]);
+      this._learnableAbilities.Add(1, gameData.PlayerAbilities[25]);
+      this._learnableAbilities.Add(2, gameData.PlayerAbilities[26]);
+      this._learnableAbilities.Add(3, gameData.PlayerAbilities[27]);
+      this._learnableAbilities.Add(4, gameData.PlayerAbilities[28]);
+      this._learnableAbilities.Add(5, gameData.PlayerAbilities[29]);
+      this._learnableAbilities.Add(6, gameData.PlayerAbilities[30]);
+      this._learnableAbilities.Add(7, gameData.PlayerAbilities[31]);
+      this._learnableAbilities.Add(8, gameData.PlayerAbilities[32]);
       PopulateLevelUpStats();
     }
   }

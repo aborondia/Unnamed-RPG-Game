@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using UnityEngine;
 
 namespace RPGGame
 {
   public class Consumable
   {
+    private GameEngine gameEngine;
+    private UIController uiController => gameEngine.UIController;
     private string _name;
     private int _price;
     private string _description;
@@ -22,8 +23,9 @@ namespace RPGGame
     public TargetType TargetType { get => this._targetType; }
     public Effect SpecialEffect { get => this._specialEffect; }
 
-    public Consumable(string name, int price, string description, int effectValue, TargetType targetType, ConsoleKey keyBind, Effect specialEffect)
+    public Consumable(GameEngine gameEngine, string name, int price, string description, int effectValue, TargetType targetType, ConsoleKey keyBind, Effect specialEffect)
     {
+      this.gameEngine = gameEngine;
       this._name = name;
       this._price = price;
       this._description = description;
@@ -35,14 +37,14 @@ namespace RPGGame
 
     public void PrintItemInfo(bool withCost = false)
     {
-      UIController.Active.Write($"{this._name} - {this._description}");
+      this.uiController.Write($"{this._name} - {this._description}");
 
       if (withCost)
       {
-        UIController.Active.Write($" - {this._price}G");
+        this.uiController.Write($" - {this._price}G");
       }
 
-      UIController.Active.Write("\n");
+      this.uiController.Write("\n");
     }
   }
 }

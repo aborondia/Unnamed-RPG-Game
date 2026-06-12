@@ -1,51 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using VContainer;
 
 namespace RPGGame
 {
-  static class Town
+  public class Town
   {
-    public static GameDataBase GameData = GameEngine.Active.GameData;
-    public static void StartTown()
+    [Inject] private GameEngine gameEngine;
+    [Inject] private UIController uiController;
+    [Inject] private PartyInfo partyInfo;
+    [Inject] private GameDataBase GameData;
+    
+    public void StartTown()
     {
       TownMenu();
     }
 
-    private static async void TownMenu()
+    private async void TownMenu()
     {
-      UIController.Active.WriteLine("Where would you like to go?");
-      UIController.Active.WriteLine("[1] Inn");
-      UIController.Active.WriteLine("[2] Arms Dealer");
-      UIController.Active.WriteLine("[3] Apothecary");
-      UIController.Active.WriteLine("[4] Doctor");
-      //UIController.Active.WriteLine("[5] Adventurer's Guild"); - sorry, I didn't have enough time to implement this
-      UIController.Active.WriteLine("[Esc] Return to menu");
+      this.uiController.WriteLine("Where would you like to go?");
+      this.uiController.WriteLine("[1] Inn");
+      this.uiController.WriteLine("[2] Arms Dealer");
+      this.uiController.WriteLine("[3] Apothecary");
+      this.uiController.WriteLine("[4] Doctor");
+      //this.uiController.WriteLine("[5] Adventurer's Guild"); - sorry, I didn't have enough time to implement this
+      this.uiController.WriteLine("[Esc] Return to menu");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
-        switch (GameEngine.Active.CurrentKeyPressed)
+        switch (this.gameEngine.CurrentKeyPressed)
         {
           case "1":
-            UIController.Active.Clear();
+            this.uiController.Clear();
             InnMenu();
             return true;
           case "2":
-            UIController.Active.Clear();
+            this.uiController.Clear();
             ArmsDealerMenu();
             return true;
           case "3":
-            UIController.Active.Clear();
+            this.uiController.Clear();
             ApothecaryMenu();
             return true;
           case "4":
-            UIController.Active.Clear();
+            this.uiController.Clear();
             DoctorMenu();
             return true;
           case "escape":
-            UIController.Active.Clear();
-            GameEngine.Active.SwitchGameState(GameState.Menu);
+            this.uiController.Clear();
+            this.gameEngine.SwitchGameState(GameState.Menu);
             return true;
         }
 
@@ -53,12 +55,12 @@ namespace RPGGame
       });
     }
 
-    private static async void InnMenu()
+    private async void InnMenu()
     {
 
       int costToRest = GetInnCost();
       // Taken from https://www.asciiart.eu
-      UIController.Active.WriteLine(@"
+      this.uiController.WriteLine(@"
     XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
  XXXXXXXXXXXXXXXXXX         XXXXXXXX
@@ -79,22 +81,22 @@ XXXXXXXXXXXXX                   XXXXX
           |\             /|
           |  \_________/  |");
 
-      UIController.Active.WriteLine("How can I help you today?");
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine($"Party Gold: {PartyInfo.Gold}");
-      UIController.Active.WriteLine($"[Space] Rest at the inn - {costToRest} gold");
-      UIController.Active.WriteLine($"[Esc] Return to town");
+      this.uiController.WriteLine("How can I help you today?");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine($"Party Gold: {this.partyInfo.Gold}");
+      this.uiController.WriteLine($"[Space] Rest at the inn - {costToRest} gold");
+      this.uiController.WriteLine($"[Esc] Return to town");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
-        switch (GameEngine.Active.CurrentKeyPressed)
+        switch (this.gameEngine.CurrentKeyPressed)
         {
-          case "spacebar":
-            UIController.Active.Clear();
+          case "space":
+            this.uiController.Clear();
             RestAtInn(costToRest);
             return true;
           case "escape":
-            UIController.Active.Clear();
+            this.uiController.Clear();
             TownMenu();
             return true;
         }
@@ -103,11 +105,11 @@ XXXXXXXXXXXXX                   XXXXX
       });
     }
 
-    private static int GetInnCost()
+    private int GetInnCost()
     {
       int cost = 0;
 
-      foreach (var character in PartyInfo.PartyMembers)
+      foreach (var character in this.partyInfo.PartyMembers)
       {
         if (character.CharacterStatus == CharacterStatus.Alive)
           cost += character.MaxHealth - character.CurrentHealth;
@@ -117,19 +119,19 @@ XXXXXXXXXXXXX                   XXXXX
       return cost;
     }
 
-    private static async void RestAtInn(int costToRest)
+    private async void RestAtInn(int costToRest)
     {
-      if (PartyInfo.Gold < costToRest)
+      if (this.partyInfo.Gold < costToRest)
       {
-        UIController.Active.WriteLine("You do not have enough money to rest here for the night.");
-        await GameEngine.Active.Pause();
+        this.uiController.WriteLine("You do not have enough money to rest here for the night.");
+        await this.gameEngine.Pause();
         TownMenu();
       }
       else
       {
-        PartyInfo.ModifyGold(-costToRest);
+        this.partyInfo.ModifyGold(-costToRest);
 
-        foreach (var character in PartyInfo.PartyMembers)
+        foreach (var character in this.partyInfo.PartyMembers)
         {
           if (character.CharacterStatus == CharacterStatus.Alive)
           {
@@ -138,18 +140,18 @@ XXXXXXXXXXXXX                   XXXXX
           }
         }
 
-        UIController.Active.WriteLine("Your party rested for the night...");
-        await GameEngine.Active.Pause(1600);
-        UIController.Active.Clear();
+        this.uiController.WriteLine("Your party rested for the night...");
+        await this.gameEngine.Pause(1600);
+        this.uiController.Clear();
         TownMenu();
       }
     }
 
-    private static async void ArmsDealerMenu()
+    private async void ArmsDealerMenu()
     {
 
       // Taken from https://www.asciiart.eu
-      UIController.Active.WriteLine(@"
+      this.uiController.WriteLine(@"
    .------\ /------.
    |       -       |
    |               |
@@ -167,38 +169,38 @@ _______________________
     \##         ##/
      \_____v_____/
 ");
-      UIController.Active.WriteLine("You looking for something in particular?");
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("Who would you like to buy new equipment for?");
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine($"[1] {PartyInfo.PartyMembers[0].Name}");
-      UIController.Active.WriteLine($"[2] {PartyInfo.PartyMembers[1].Name}");
-      UIController.Active.WriteLine($"[3] {PartyInfo.PartyMembers[2].Name}");
-      UIController.Active.WriteLine($"[4] {PartyInfo.PartyMembers[3].Name}");
-      UIController.Active.WriteLine($"[Esc] Return to town");
+      this.uiController.WriteLine("You looking for something in particular?");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("Who would you like to buy new equipment for?");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine($"[1] {this.partyInfo.PartyMembers[0].Name}");
+      this.uiController.WriteLine($"[2] {this.partyInfo.PartyMembers[1].Name}");
+      this.uiController.WriteLine($"[3] {this.partyInfo.PartyMembers[2].Name}");
+      this.uiController.WriteLine($"[4] {this.partyInfo.PartyMembers[3].Name}");
+      this.uiController.WriteLine($"[Esc] Return to town");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
-        switch (GameEngine.Active.CurrentKeyPressed)
+        switch (this.gameEngine.CurrentKeyPressed)
         {
           case "1":
-            UIController.Active.Clear();
-            ShowEquipmentForSale(PartyInfo.PartyMembers[0]);
+            this.uiController.Clear();
+            ShowEquipmentForSale(this.partyInfo.PartyMembers[0]);
             return true;
           case "2":
-            UIController.Active.Clear();
-            ShowEquipmentForSale(PartyInfo.PartyMembers[1]);
+            this.uiController.Clear();
+            ShowEquipmentForSale(this.partyInfo.PartyMembers[1]);
             return true;
           case "3":
-            UIController.Active.Clear();
-            ShowEquipmentForSale(PartyInfo.PartyMembers[2]);
+            this.uiController.Clear();
+            ShowEquipmentForSale(this.partyInfo.PartyMembers[2]);
             return true;
           case "4":
-            UIController.Active.Clear();
-            ShowEquipmentForSale(PartyInfo.PartyMembers[3]);
+            this.uiController.Clear();
+            ShowEquipmentForSale(this.partyInfo.PartyMembers[3]);
             return true;
           case "escape":
-            UIController.Active.Clear();
+            this.uiController.Clear();
             TownMenu();
             return true;
         }
@@ -207,43 +209,43 @@ _______________________
       });
     }
 
-    private static async void ShowEquipmentForSale(PlayerCharacter character)
+    private async void ShowEquipmentForSale(PlayerCharacter character)
     {
       int keyBind = 1;
 
       Dictionary<int, Equipment> equipmentKeyBinds = new Dictionary<int, Equipment>();
 
-      UIController.Active.WriteLine($"{character.Name}'s current equipment:");
+      this.uiController.WriteLine($"{character.Name}'s current equipment:");
       character.MainHand.PrintEquipmentInfo();
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
       character.OffHand.PrintEquipmentInfo();
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
       character.Armor.PrintEquipmentInfo();
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
 
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("Available equipment:");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("Available equipment:");
 
       foreach (Equipment item in GameData.Equipment)
       {
         if (character.PlayerProfession == item.CanBeUsedBy)
         {
           equipmentKeyBinds.Add(keyBind, item);
-          UIController.Active.Write($"[{keyBind++}]");
+          this.uiController.Write($"[{keyBind++}]");
           item.PrintEquipmentInfo(false);
-          UIController.Active.WriteLine();
+          this.uiController.WriteLine();
         }
       }
-      UIController.Active.WriteLine("[Esc] Return to town");
+      this.uiController.WriteLine("[Esc] Return to town");
 
       string keyPressed;
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
-          keyPressed = GameEngine.Active.CurrentKeyPressed;
+          keyPressed = this.gameEngine.CurrentKeyPressed;
 
           if (keyPressed == "escape")
           {
-            UIController.Active.Clear();
+            this.uiController.Clear();
             TownMenu();
             return true;
           }
@@ -258,14 +260,14 @@ _______________________
         });
     }
 
-    private static async void ApothecaryMenu()
+    private async void ApothecaryMenu()
     {
       int keyBind = 1;
 
       Dictionary<int, Consumable> consumableKeyBinds = new Dictionary<int, Consumable>();
       // Taken from https://www.asciiart.eu
       // Art by THE LOCKER GNOME
-      UIController.Active.WriteLine(@"
+      this.uiController.WriteLine(@"
                        ,---.
                        /    |
                       /     |
@@ -294,24 +296,24 @@ _______________________
         ||                ,'   / SSt|
 ");
 
-      UIController.Active.WriteLine("Hello friend. What can I get you today?");
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine("Hello friend. What can I get you today?");
+      this.uiController.WriteLine();
 
       foreach (Consumable item in GameData.Consumables.Values)
       {
         consumableKeyBinds.Add(keyBind, item);
-        UIController.Active.Write($"[{keyBind++}] ");
+        this.uiController.Write($"[{keyBind++}] ");
         item.PrintItemInfo(true);
       }
-      UIController.Active.WriteLine("[Esc] Return to town");
+      this.uiController.WriteLine("[Esc] Return to town");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
-          string keyPressed = GameEngine.Active.CurrentKeyPressed;
+          string keyPressed = this.gameEngine.CurrentKeyPressed;
 
           if (keyPressed == "escape")
           {
-            UIController.Active.Clear();
+            this.uiController.Clear();
             TownMenu();
             return true;
           }
@@ -326,7 +328,7 @@ _______________________
         });
     }
 
-    private static async void PurchaseItem(Equipment item, PlayerCharacter character)
+    private async void PurchaseItem(Equipment item, PlayerCharacter character)
     {
       int finalPrice = int.MinValue;
 
@@ -343,38 +345,38 @@ _______________________
           break;
       }
 
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
 
-      if (PartyInfo.Gold < finalPrice)
+      if (this.partyInfo.Gold < finalPrice)
       {
-        UIController.Active.WriteLine("You don't have enough gold! Don't waste my time!");
-        await GameEngine.Active.Pause();
-        UIController.Active.Clear();
+        this.uiController.WriteLine("You don't have enough gold! Don't waste my time!");
+        await this.gameEngine.Pause();
+        this.uiController.Clear();
         ArmsDealerMenu();
         return;
       }
 
-      UIController.Active.WriteLine($"That will be {finalPrice}G with your trade in.");
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("[Spacebar] Purchase equipment");
-      UIController.Active.WriteLine("[Esc] On second thought...");
+      this.uiController.WriteLine($"That will be {finalPrice}G with your trade in.");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("[Spacebar] Purchase equipment");
+      this.uiController.WriteLine("[Esc] On second thought...");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
        {
-         switch (GameEngine.Active.CurrentKeyPressed)
+         switch (this.gameEngine.CurrentKeyPressed)
          {
-           case "spacebar":
-             PartyInfo.ModifyGold(-finalPrice);
+           case "space":
+             this.partyInfo.ModifyGold(-finalPrice);
              character.EquipItem(item);
-             UIController.Active.WriteLine("Take good care of it.");
-             GameEngine.Active.PerformActionAfterPause(() =>
+             this.uiController.WriteLine("Take good care of it.");
+             this.gameEngine.PerformActionAfterPause(() =>
              {
-               UIController.Active.Clear();
+               this.uiController.Clear();
                ArmsDealerMenu();
              });
              return true;
            case "escape":
-             UIController.Active.Clear();
+             this.uiController.Clear();
              ArmsDealerMenu();
              return true;
          }
@@ -383,42 +385,42 @@ _______________________
        });
     }
 
-    private static async void PurchaseItem(Consumable item)
+    private async void PurchaseItem(Consumable item)
     {
-      if (PartyInfo.Gold < item.Price)
+      if (this.partyInfo.Gold < item.Price)
       {
-        UIController.Active.WriteLine("I'm afraid you're short on gold my friend...");
-        await GameEngine.Active.Pause();
-        UIController.Active.Clear();
+        this.uiController.WriteLine("I'm afraid you're short on gold my friend...");
+        await this.gameEngine.Pause();
+        this.uiController.Clear();
         ApothecaryMenu();
         return;
       }
 
-      PartyInfo.ModifyGold(-item.Price);
+      this.partyInfo.ModifyGold(-item.Price);
 
-      if (PartyInfo.UsableItems.ContainsKey(item))
+      if (this.partyInfo.UsableItems.ContainsKey(item))
       {
-        PartyInfo.UsableItems[item]++;
+        this.partyInfo.UsableItems[item]++;
       }
       else
       {
-        PartyInfo.UsableItems[item] = 1;
+        this.partyInfo.UsableItems[item] = 1;
       }
 
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("Thank you for your patronage!");
-      await GameEngine.Active.Pause();
-      UIController.Active.Clear();
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("Thank you for your patronage!");
+      await this.gameEngine.Pause();
+      this.uiController.Clear();
       ApothecaryMenu();
     }
 
-    private static async void DoctorMenu()
+    private async void DoctorMenu()
     {
       int keyBind = 1;
 
       Dictionary<int, PlayerCharacter> deadCharacters = new Dictionary<int, PlayerCharacter>();
       // Taken from https://www.asciiart.eu
-      UIController.Active.WriteLine(@"
+      this.uiController.WriteLine(@"
                                      ____________
                                _____/            \_
                     __________/  _/          _____ \__
@@ -458,9 +460,9 @@ _______________________
                 _______|____/                       \___\__
 ");
 
-      UIController.Active.WriteLine("Hello there!");
+      this.uiController.WriteLine("Hello there!");
 
-      foreach (PlayerCharacter character in PartyInfo.PartyMembers)
+      foreach (PlayerCharacter character in this.partyInfo.PartyMembers)
       {
         if (character.CharacterStatus == CharacterStatus.Dead)
         {
@@ -470,31 +472,31 @@ _______________________
 
       if (deadCharacters.Count <= 0)
       {
-        await GameEngine.Active.Pause();
-        UIController.Active.WriteLine("I'm glad to see that none of you are in need of my services!");
-        await GameEngine.Active.Pause();
-        UIController.Active.WriteLine("Have a nice day!");
-        await GameEngine.Active.Pause();
-        UIController.Active.Clear();
+        await this.gameEngine.Pause();
+        this.uiController.WriteLine("I'm glad to see that none of you are in need of my services!");
+        await this.gameEngine.Pause();
+        this.uiController.WriteLine("Have a nice day!");
+        await this.gameEngine.Pause();
+        this.uiController.Clear();
         TownMenu();
       }
       else
       {
         foreach (var character in deadCharacters)
         {
-          UIController.Active.WriteLine($"[{character.Key}] {character.Value.Name} - {GetReviveCost(character.Value)}G");
+          this.uiController.WriteLine($"[{character.Key}] {character.Value.Name} - {GetReviveCost(character.Value)}G");
         }
 
-        UIController.Active.WriteLine("[Esc] Return to town");
+        this.uiController.WriteLine("[Esc] Return to town");
       }
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
-          string keyPressed = GameEngine.Active.CurrentKeyPressed;
+          string keyPressed = this.gameEngine.CurrentKeyPressed;
 
           if (keyPressed == "escape")
           {
-            UIController.Active.Clear();
+            this.uiController.Clear();
             TownMenu();
             return true;
           }
@@ -509,19 +511,19 @@ _______________________
         });
     }
 
-    private static int GetReviveCost(PlayerCharacter character)
+    private int GetReviveCost(PlayerCharacter character)
     {
       return character.Level * 100;
     }
 
-    private static async void ReviveCharacter(PlayerCharacter character, Dictionary<int, PlayerCharacter> deadCharacters)
+    private async void ReviveCharacter(PlayerCharacter character, Dictionary<int, PlayerCharacter> deadCharacters)
     {
       int reviveCost = GetReviveCost(character);
 
-      if (PartyInfo.Gold < reviveCost)
+      if (this.partyInfo.Gold < reviveCost)
       {
-        UIController.Active.WriteLine("It looks like you don't have enough...");
-        await GameEngine.Active.Pause(2400);
+        this.uiController.WriteLine("It looks like you don't have enough...");
+        await this.gameEngine.Pause(2400);
 
         foreach (var deadCharacter in deadCharacters.Values)
         {
@@ -529,26 +531,26 @@ _______________________
           deadCharacter.CurrentHealth = 1;
         }
 
-        UIController.Active.WriteLine("Still, I can't let you leave like that. Pay me what you can and I'll take care of you.");
+        this.uiController.WriteLine("Still, I can't let you leave like that. Pay me what you can and I'll take care of you.");
 
-        await GameEngine.Active.Pause(2400);
+        await this.gameEngine.Pause(2400);
 
-        UIController.Active.Clear();
-        UIController.Active.WriteLine("You waited patiently while your injured allies wounds were treated...");
+        this.uiController.Clear();
+        this.uiController.WriteLine("You waited patiently while your injured allies wounds were treated...");
 
-        await GameEngine.Active.Pause(2400);
+        await this.gameEngine.Pause(2400);
 
-        UIController.Active.Clear();
+        this.uiController.Clear();
         TownMenu();
       }
       else
       {
-        PartyInfo.ModifyGold(-reviveCost);
+        this.partyInfo.ModifyGold(-reviveCost);
         character.CharacterStatus = CharacterStatus.Alive;
         character.CurrentHealth = 1;
-        UIController.Active.WriteLine("I'll patch you up right away!");
+        this.uiController.WriteLine("I'll patch you up right away!");
 
-        await GameEngine.Active.Pause(2400);
+        await this.gameEngine.Pause(2400);
 
         DoctorMenu();
       }

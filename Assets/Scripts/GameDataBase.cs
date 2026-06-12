@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VContainer;
 
 namespace RPGGame
 {
@@ -28,8 +29,11 @@ namespace RPGGame
     Self,
     Party
   }
-  public class GameDataBase
+  public class GameDataBase 
   {
+    [Inject] private IObjectResolver resolver;
+    [Inject] private UIController uiController;
+    [Inject] private PartyInfo partyInfo;
     private Dictionary<ConsoleKey, Consumable> _consumables;
     private List<PlayerProfession> _playerProfessions;
     private List<Equipment> _equipment;
@@ -68,7 +72,7 @@ namespace RPGGame
 
     public async UniTask InitializeData(bool standardParty)
     {
-      PartyInfo.ResetData();
+      this.partyInfo.ResetData();
       this.Consumables.Clear();
       this.PlayerAbilities.Clear();
       this.PlayerProfessions.Clear();
@@ -94,10 +98,10 @@ namespace RPGGame
 
       if (standardParty)
       {
-        player1 = new PlayerCharacter("Terra", _playerProfessions[2]);
-        player2 = new PlayerCharacter("Cyan", _playerProfessions[0]);
-        player3 = new PlayerCharacter("Locke", _playerProfessions[1]);
-        player4 = new PlayerCharacter("Celes", _playerProfessions[3]);
+        player1 = new PlayerCharacter(this.resolver.Resolve<GameEngine>(), "Terra", _playerProfessions[2]);
+        player2 = new PlayerCharacter(this.resolver.Resolve<GameEngine>(), "Cyan", _playerProfessions[0]);
+        player3 = new PlayerCharacter(this.resolver.Resolve<GameEngine>(), "Locke", _playerProfessions[1]);
+        player4 = new PlayerCharacter(this.resolver.Resolve<GameEngine>(), "Celes", _playerProfessions[3]);
       }
       else
       {
@@ -108,13 +112,13 @@ namespace RPGGame
       }
 
       this._playerCharacters.Add(player1);
-      PartyInfo.PartyMembers.Add(player1);
+      this.partyInfo.PartyMembers.Add(player1);
       this._playerCharacters.Add(player2);
-      PartyInfo.PartyMembers.Add(player2);
+      this.partyInfo.PartyMembers.Add(player2);
       this._playerCharacters.Add(player3);
-      PartyInfo.PartyMembers.Add(player3);
+      this.partyInfo.PartyMembers.Add(player3);
       this._playerCharacters.Add(player4);
-      PartyInfo.PartyMembers.Add(player4);
+      this.partyInfo.PartyMembers.Add(player4);
     }
 
     private void InitializePlayerAbilities()
@@ -208,10 +212,10 @@ namespace RPGGame
 
     private void InitializePlayerProfessions()
     {
-      this._playerProfessions.Add(new Warrior());
-      this._playerProfessions.Add(new Rouge());
-      this._playerProfessions.Add(new Wizard());
-      this._playerProfessions.Add(new Cleric());
+      this._playerProfessions.Add(new Warrior(this));
+      this._playerProfessions.Add(new Rouge(this));
+      this._playerProfessions.Add(new Wizard(this));
+      this._playerProfessions.Add(new Cleric(this));
 
     }
 
@@ -259,7 +263,7 @@ namespace RPGGame
 \       \  /`
 jgs      \(
 ");
-      this._enemyCharacters[Difficulty.Easy].Add(new EnemyCharacter("Goblin", 200, 30, 10, 2, 1, 10, 10, 80, 50, null, new HashSet<Element> { Element.Water }, enemyBehaviour, 0));
+      this._enemyCharacters[Difficulty.Easy].Add(new EnemyCharacter(this.resolver.Resolve<GameEngine>(), "Goblin", 200, 30, 10, 2, 1, 10, 10, 80, 50, null, new HashSet<Element> { Element.Water }, enemyBehaviour, 0));
 
       enemyBehaviour = new Dictionary<EnemyAbility, int>();
       enemyBehaviour.Add(this._enemyAbilities[2], 50);
@@ -290,7 +294,7 @@ jgs      \(
 (_ \|`   _,/_  /  \_            ,--`
  \( `   <.,../`     `-.._   _,-`
 ");
-      this._enemyCharacters[Difficulty.Average].Add(new EnemyCharacter("Minotaur", 500, 50, 40, 10, 25, 15, 25, 150, 200, new HashSet<Element> { Element.Fire, Element.Earth }, new HashSet<Element> { Element.Wind, Element.Dark }, enemyBehaviour, 1));
+      this._enemyCharacters[Difficulty.Average].Add(new EnemyCharacter(this.resolver.Resolve<GameEngine>(), "Minotaur", 500, 50, 40, 10, 25, 15, 25, 150, 200, new HashSet<Element> { Element.Fire, Element.Earth }, new HashSet<Element> { Element.Wind, Element.Dark }, enemyBehaviour, 1));
 
       enemyBehaviour = new Dictionary<EnemyAbility, int>();
       enemyBehaviour.Add(this._enemyAbilities[5], 40);
@@ -316,7 +320,7 @@ jgs      \(
                               //.-~~~-~_--~- |-------~~~~~~~~
                                      //.-~~~--\
 ");
-      this._enemyCharacters[Difficulty.Hard].Add(new EnemyCharacter("Dragon", 1000, 90, 70, 90, 70, 35, 60, 400, 400, new HashSet<Element> { Element.Fire, Element.Earth, Element.Water, Element.Wind }, new HashSet<Element> { Element.Light, Element.Dark }, enemyBehaviour, 2));
+      this._enemyCharacters[Difficulty.Hard].Add(new EnemyCharacter(this.resolver.Resolve<GameEngine>(), "Dragon", 1000, 90, 70, 90, 70, 35, 60, 400, 400, new HashSet<Element> { Element.Fire, Element.Earth, Element.Water, Element.Wind }, new HashSet<Element> { Element.Light, Element.Dark }, enemyBehaviour, 2));
 
 
       enemyBehaviour = new Dictionary<EnemyAbility, int>();
@@ -343,65 +347,68 @@ eViL        /   /     ||--+--|--+-/-|     \   \
             \   \__, \_     `~'     _/ .__/   /            
              `-._,-'   `-._______,-'   `-._,-'
 ");
-      this._enemyCharacters[Difficulty.VeryHard].Add(new EnemyCharacter("Demon Lord", 3000, 120, 110, 100, 80, 60, 90, 1000, 1500, new HashSet<Element> { Element.Dark }, new HashSet<Element> { Element.Light }, enemyBehaviour, 3));
+      this._enemyCharacters[Difficulty.VeryHard].Add(new EnemyCharacter(this.resolver.Resolve<GameEngine>(), "Demon Lord", 3000, 120, 110, 100, 80, 60, 90, 1000, 1500, new HashSet<Element> { Element.Dark }, new HashSet<Element> { Element.Light }, enemyBehaviour, 3));
     }
 
     private void InitializeConsumables()
     {
-      this._consumables.Add(ConsoleKey.D1, new Consumable("Potion", 10, "Heal one ally HP by 25", 25, TargetType.Ally, ConsoleKey.D1, Effect.HealHP));
-      PartyInfo.AddItem(this._consumables[ConsoleKey.D1], 3);
+      GameEngine gameEngine = this.resolver.Resolve<GameEngine>();
 
-      this._consumables.Add(ConsoleKey.D3, new Consumable("Hi-Potion", 30, "Heal one ally HP by 50", 50, TargetType.Ally, ConsoleKey.D3, Effect.HealHP));
-      this._consumables.Add(ConsoleKey.D5, new Consumable("Mega-Potion", 80, "Fully heal one ally", 50, TargetType.Ally, ConsoleKey.D5, Effect.HealHP));
-      this._consumables.Add(ConsoleKey.D2, new Consumable("Ether", 30, "Restore 15 MP", 50, TargetType.Ally, ConsoleKey.D2, Effect.HealMP));
-      PartyInfo.AddItem(this._consumables[ConsoleKey.D2], 2);
+      this._consumables.Add(ConsoleKey.D1, new Consumable(gameEngine, "Potion", 10, "Heal one ally HP by 25", 25, TargetType.Ally, ConsoleKey.D1, Effect.HealHP));
+      this.partyInfo.AddItem(this._consumables[ConsoleKey.D1], 3);
 
-      this._consumables.Add(ConsoleKey.D4, new Consumable("Hi-Ether", 70, "Restore 30 MP", 50, TargetType.Ally, ConsoleKey.D4, Effect.HealMP));
-      this._consumables.Add(ConsoleKey.D6, new Consumable("Mega Ether", 150, "Fully restore MP", 50, TargetType.Ally, ConsoleKey.D6, Effect.HealMP));
+      this._consumables.Add(ConsoleKey.D3, new Consumable(gameEngine, "Hi-Potion", 30, "Heal one ally HP by 50", 50, TargetType.Ally, ConsoleKey.D3, Effect.HealHP));
+      this._consumables.Add(ConsoleKey.D5, new Consumable(gameEngine, "Mega-Potion", 80, "Fully heal one ally", 50, TargetType.Ally, ConsoleKey.D5, Effect.HealHP));
+      this._consumables.Add(ConsoleKey.D2, new Consumable(gameEngine, "Ether", 30, "Restore 15 MP", 50, TargetType.Ally, ConsoleKey.D2, Effect.HealMP));
+      this.partyInfo.AddItem(this._consumables[ConsoleKey.D2], 2);
+
+      this._consumables.Add(ConsoleKey.D4, new Consumable(gameEngine, "Hi-Ether", 70, "Restore 30 MP", 50, TargetType.Ally, ConsoleKey.D4, Effect.HealMP));
+      this._consumables.Add(ConsoleKey.D6, new Consumable(gameEngine, "Mega Ether", 150, "Fully restore MP", 50, TargetType.Ally, ConsoleKey.D6, Effect.HealMP));
     }
 
     private void InitializeEquipment()
     {
-      this._equipment.Add(new Equipment(10, EquipmentType.MainHand, "Chipped Long Sword", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 6) }));
-      this._equipment.Add(new Equipment(100, EquipmentType.MainHand, "Fine Long Sword", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 15) }));
-      this._equipment.Add(new Equipment(500, EquipmentType.MainHand, "Magical Long Sword", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 25) }));
-      this._equipment.Add(new Equipment(10, EquipmentType.OffHand, "Dented Small Shield", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 3) }));
-      this._equipment.Add(new Equipment(80, EquipmentType.OffHand, "Kite Shield", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 8) }));
-      this._equipment.Add(new Equipment(350, EquipmentType.OffHand, "Spiked Shield", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 12), new StatModifier(StatModifierType.Attack, 5) }));
-      this._equipment.Add(new Equipment(10, EquipmentType.Armor, "Battered Chain Mail", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 5) }));
-      this._equipment.Add(new Equipment(150, EquipmentType.Armor, "Scale Mail", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 12) }));
-      this._equipment.Add(new Equipment(700, EquipmentType.Armor, "Plate Mail", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 25) }));
+      GameEngine gameEngine = this.resolver.Resolve<GameEngine>();
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.MainHand, "Chipped Long Sword", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 100, EquipmentType.MainHand, "Fine Long Sword", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 15) }));
+      this._equipment.Add(new Equipment(gameEngine, 500, EquipmentType.MainHand, "Magical Long Sword", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 25) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.OffHand, "Dented Small Shield", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 3) }));
+      this._equipment.Add(new Equipment(gameEngine, 80, EquipmentType.OffHand, "Kite Shield", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 8) }));
+      this._equipment.Add(new Equipment(gameEngine, 350, EquipmentType.OffHand, "Spiked Shield", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 12), new StatModifier(StatModifierType.Attack, 5) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.Armor, "Battered Chain Mail", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 5) }));
+      this._equipment.Add(new Equipment(gameEngine, 150, EquipmentType.Armor, "Scale Mail", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 12) }));
+      this._equipment.Add(new Equipment(gameEngine, 700, EquipmentType.Armor, "Plate Mail", this._playerProfessions[0], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 25) }));
 
-      this._equipment.Add(new Equipment(10, EquipmentType.MainHand, "Chipped Short Sword", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 4) }));
-      this._equipment.Add(new Equipment(100, EquipmentType.MainHand, "Sharp Short Sword", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 10) }));
-      this._equipment.Add(new Equipment(500, EquipmentType.MainHand, "Lethal Short Sword", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 18), new StatModifier(StatModifierType.Dexterity, 6) }));
-      this._equipment.Add(new Equipment(10, EquipmentType.OffHand, "Tarnished Parrying Dagger", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 1), new StatModifier(StatModifierType.Agility, 4) }));
-      this._equipment.Add(new Equipment(100, EquipmentType.OffHand, "Fine Parrying Dagger", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 3), new StatModifier(StatModifierType.Agility, 8) }));
-      this._equipment.Add(new Equipment(400, EquipmentType.OffHand, "Magical Parrying Dagger", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 5), new StatModifier(StatModifierType.Agility, 12) }));
-      this._equipment.Add(new Equipment(10, EquipmentType.Armor, "Ragged Clothes", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 3) }));
-      this._equipment.Add(new Equipment(100, EquipmentType.Armor, "Reinforced Clothes", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 9) }));
-      this._equipment.Add(new Equipment(600, EquipmentType.Armor, "Light Mail", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 15) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.MainHand, "Chipped Short Sword", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 4) }));
+      this._equipment.Add(new Equipment(gameEngine, 100, EquipmentType.MainHand, "Sharp Short Sword", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 10) }));
+      this._equipment.Add(new Equipment(gameEngine, 500, EquipmentType.MainHand, "Lethal Short Sword", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 18), new StatModifier(StatModifierType.Dexterity, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.OffHand, "Tarnished Parrying Dagger", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 1), new StatModifier(StatModifierType.Agility, 4) }));
+      this._equipment.Add(new Equipment(gameEngine, 100, EquipmentType.OffHand, "Fine Parrying Dagger", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 3), new StatModifier(StatModifierType.Agility, 8) }));
+      this._equipment.Add(new Equipment(gameEngine, 400, EquipmentType.OffHand, "Magical Parrying Dagger", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 5), new StatModifier(StatModifierType.Agility, 12) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.Armor, "Ragged Clothes", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 3) }));
+      this._equipment.Add(new Equipment(gameEngine, 100, EquipmentType.Armor, "Reinforced Clothes", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 9) }));
+      this._equipment.Add(new Equipment(gameEngine, 600, EquipmentType.Armor, "Light Mail", this._playerProfessions[1], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 15) }));
 
-      this._equipment.Add(new Equipment(10, EquipmentType.MainHand, "Cracked Staff", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 3) }));
-      this._equipment.Add(new Equipment(70, EquipmentType.MainHand, "Fine Staff", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 10) }));
-      this._equipment.Add(new Equipment(450, EquipmentType.MainHand, "Magical Staff", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 15), new StatModifier(StatModifierType.Magic, 5) }));
-      this._equipment.Add(new Equipment(10, EquipmentType.OffHand, "Plain Wand", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Magic, 1) }));
-      this._equipment.Add(new Equipment(150, EquipmentType.OffHand, "Magic Wand", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Magic, 6) }));
-      this._equipment.Add(new Equipment(500, EquipmentType.OffHand, "Sorcerer Wand", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Magic, 15) }));
-      this._equipment.Add(new Equipment(10, EquipmentType.Armor, "Ragged Robes", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 1) }));
-      this._equipment.Add(new Equipment(100, EquipmentType.Armor, "Fine Robes", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 6) }));
-      this._equipment.Add(new Equipment(600, EquipmentType.Armor, "Sorcerer Robes", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 10), new StatModifier(StatModifierType.Magic, 5) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.MainHand, "Cracked Staff", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 3) }));
+      this._equipment.Add(new Equipment(gameEngine, 70, EquipmentType.MainHand, "Fine Staff", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 10) }));
+      this._equipment.Add(new Equipment(gameEngine, 450, EquipmentType.MainHand, "Magical Staff", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 15), new StatModifier(StatModifierType.Magic, 5) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.OffHand, "Plain Wand", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Magic, 1) }));
+      this._equipment.Add(new Equipment(gameEngine, 150, EquipmentType.OffHand, "Magic Wand", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Magic, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 500, EquipmentType.OffHand, "Sorcerer Wand", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Magic, 15) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.Armor, "Ragged Robes", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 1) }));
+      this._equipment.Add(new Equipment(gameEngine, 100, EquipmentType.Armor, "Fine Robes", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 600, EquipmentType.Armor, "Sorcerer Robes", this._playerProfessions[2], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 10), new StatModifier(StatModifierType.Magic, 5) }));
 
 
-      this._equipment.Add(new Equipment(10, EquipmentType.MainHand, "Warped Mace", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 6) }));
-      this._equipment.Add(new Equipment(100, EquipmentType.MainHand, "Fine Mace", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 12) }));
-      this._equipment.Add(new Equipment(450, EquipmentType.MainHand, "Holy Mace", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 16), new StatModifier(StatModifierType.Will, 6) }));
-      this._equipment.Add(new Equipment(10, EquipmentType.OffHand, "Scratched Buckler", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 2) }));
-      this._equipment.Add(new Equipment(100, EquipmentType.OffHand, "Fine Buckler", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 6) }));
-      this._equipment.Add(new Equipment(400, EquipmentType.OffHand, "Imbued Buckler", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 8), new StatModifier(StatModifierType.Will, 6) }));
-      this._equipment.Add(new Equipment(10, EquipmentType.Armor, "Ragged Vestment", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 1), new StatModifier(StatModifierType.Will, 2) }));
-      this._equipment.Add(new Equipment(150, EquipmentType.Armor, "Holy Vestment", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 8), new StatModifier(StatModifierType.Will, 6) }));
-      this._equipment.Add(new Equipment(600, EquipmentType.Armor, "Radiant Vestment", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 12), new StatModifier(StatModifierType.Will, 10) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.MainHand, "Warped Mace", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 100, EquipmentType.MainHand, "Fine Mace", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 12) }));
+      this._equipment.Add(new Equipment(gameEngine, 450, EquipmentType.MainHand, "Holy Mace", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Attack, 16), new StatModifier(StatModifierType.Will, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.OffHand, "Scratched Buckler", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 2) }));
+      this._equipment.Add(new Equipment(gameEngine, 100, EquipmentType.OffHand, "Fine Buckler", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 400, EquipmentType.OffHand, "Imbued Buckler", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 8), new StatModifier(StatModifierType.Will, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 10, EquipmentType.Armor, "Ragged Vestment", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 1), new StatModifier(StatModifierType.Will, 2) }));
+      this._equipment.Add(new Equipment(gameEngine, 150, EquipmentType.Armor, "Holy Vestment", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 8), new StatModifier(StatModifierType.Will, 6) }));
+      this._equipment.Add(new Equipment(gameEngine, 600, EquipmentType.Armor, "Radiant Vestment", this._playerProfessions[3], new List<StatModifier> { new StatModifier(StatModifierType.Defense, 12), new StatModifier(StatModifierType.Will, 10) }));
     }
 
     private async UniTask<PlayerCharacter> CreateCharacter(int playerNumber)
@@ -409,32 +416,32 @@ eViL        /   /     ||--+--|--+-/-|     \   \
       PlayerProfession chosenProfession = null;
       string characterName;
 
-      UIController.Active.WriteLine($"Please enter player {playerNumber}'s name:");
+      this.uiController.WriteLine($"Please enter player {playerNumber}'s name:");
 
-      characterName = await GameEngine.Active.WaitForPlayerInput();
+      characterName = await this.resolver.Resolve<GameEngine>().WaitForPlayerInput();
 
       foreach (var player in this._playerCharacters)
       {
         if (player.Name.ToLower() == characterName.ToLower())
         {
-          UIController.Active.WriteLine("There is already a player character with that name.");
+          this.uiController.WriteLine("There is already a player character with that name.");
           return await CreateCharacter(playerNumber);
         }
       }
 
-      UIController.Active.WriteLine($"Please choose player {playerNumber}'s class:");
+      this.uiController.WriteLine($"Please choose player {playerNumber}'s class:");
       int keyBind = 1;
       Dictionary<string, PlayerProfession> availableProfessions = new Dictionary<string, PlayerProfession>();
 
       foreach (PlayerProfession playerProfession in this._playerProfessions)
       {
         availableProfessions.Add(keyBind.ToString(), playerProfession);
-        UIController.Active.WriteLine($"[{keyBind++}] {playerProfession.Name}");
+        this.uiController.WriteLine($"[{keyBind++}] {playerProfession.Name}");
       }
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.resolver.Resolve<GameEngine>().WaitForPlayerKeyPress(() =>
         {
-          string keyPressed = GameEngine.Active.CurrentKeyPressed;
+          string keyPressed = this.resolver.Resolve<GameEngine>().CurrentKeyPressed;
 
           if (availableProfessions.ContainsKey(keyPressed))
           {
@@ -445,7 +452,7 @@ eViL        /   /     ||--+--|--+-/-|     \   \
           return false;
         });
 
-      return new PlayerCharacter(characterName, chosenProfession);
+      return new PlayerCharacter(this.resolver.Resolve<GameEngine>(), characterName, chosenProfession);
     }
   }
 }

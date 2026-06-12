@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using UnityEngine;
+using VContainer;
 
 namespace RPGGame
 {
@@ -11,9 +12,13 @@ namespace RPGGame
     DamageHp,
     Buff,
   }
-  static class Effects
+  public class Effects 
   {
-    public static void HealHP(List<Character> targets, int healAmount)
+    [Inject] private GameEngine gameEngine;
+    [Inject] private UIController uiController;
+    [Inject] private PartyInfo partyInfo;
+
+    public void HealHP(List<Character> targets, int healAmount)
     {
       for (int i = 0; i < targets.Count; i++)
       {
@@ -34,28 +39,28 @@ namespace RPGGame
           targets[i].CurrentHealth = targets[i].CurrentHealth + healAmount;
         }
 
-        UIController.Active.WriteColorText(ConsoleColor.Green, $"{targets[i].Name} recovered {amountText}.");
-        GameEngine.Active.Pause();
+        this.uiController.WriteColorText(ConsoleColor.Green, $"{targets[i].Name} recovered {amountText}.");
+        this.gameEngine.Pause();
       }
     }
 
-    public static void HealMP(PlayerCharacter target, int healAmount)
+    public void HealMP(PlayerCharacter target, int healAmount)
     {
       if (target.MaxMana <= target.CurrentMana + healAmount)
       {
         target.CurrentMana = target.MaxMana;
-        UIController.Active.WriteLine($"{target.Name} recovered full MP.");
-        GameEngine.Active.Pause();
+        this.uiController.WriteLine($"{target.Name} recovered full MP.");
+        this.gameEngine.Pause();
       }
       else
       {
         target.CurrentMana += healAmount;
-        UIController.Active.WriteLine($"{target.Name} regained {healAmount} MP.");
-        GameEngine.Active.Pause();
+        this.uiController.WriteLine($"{target.Name} regained {healAmount} MP.");
+        this.gameEngine.Pause();
       }
     }
 
-    public static void DamageHP(List<Character> targets, List<int> damage)
+    public void DamageHP(List<Character> targets, List<int> damage)
     {
       for (int i = 0; i < targets.Count; i++)
       {
@@ -66,14 +71,14 @@ namespace RPGGame
 
         if (damage[i] <= 0)
         {
-          UIController.Active.WriteLine($"{targets[i].Name} dodged the attack!");
-          GameEngine.Active.Pause();
+          this.uiController.WriteLine($"{targets[i].Name} dodged the attack!");
+          this.gameEngine.Pause();
           continue;
         }
 
         targets[i].CurrentHealth -= damage[i];
-        UIController.Active.WriteColorText(ConsoleColor.Red, $"{targets[i].Name} received {damage[i]} damage!");
-        GameEngine.Active.Pause();
+        this.uiController.WriteColorText(ConsoleColor.Red, $"{targets[i].Name} received {damage[i]} damage!");
+        this.gameEngine.Pause();
 
         if (targets[i].CurrentHealth <= 0)
         {
@@ -83,16 +88,16 @@ namespace RPGGame
 
           if (targets[i] is PlayerCharacter)
           {
-            PartyInfo.UpdateDeathCount();
+            this.partyInfo.UpdateDeathCount();
           }
 
-          UIController.Active.WriteColorText(ConsoleColor.DarkRed, $"{targets[i].Name} has been slain!");
-          GameEngine.Active.Pause();
+          this.uiController.WriteColorText(ConsoleColor.DarkRed, $"{targets[i].Name} has been slain!");
+          this.gameEngine.Pause();
         }
       }
     }
 
-    public static void ModifyStats(List<Character> targets, List<TemporaryBuff> temporaryBuffs)
+    public void ModifyStats(List<Character> targets, List<TemporaryBuff> temporaryBuffs)
     {
       foreach (Character target in targets)
       {

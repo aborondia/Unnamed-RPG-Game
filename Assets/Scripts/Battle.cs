@@ -1,36 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
+using VContainer;
 
 namespace RPGGame
 {
-  static class Battle
+  public class Battle
   {
-    public static GameDataBase GameData = GameEngine.Active.GameData;
-    private static bool _initializedNewTurn = false;
-    private static Dictionary<int, PlayerCharacter> _battleParty = new Dictionary<int, PlayerCharacter>();
-    private static EnemyCharacter _currentEnemy;
-    private static Character _currentCharacterTurn;
-    private static List<Character> _characterTurns = new List<Character>();
-    private static List<Character> _targets = new List<Character>();
-    private static List<int> _actionEffectValues = new List<int>();
-    private static List<TemporaryBuff> _temporaryBuffValues = new List<TemporaryBuff>();
-    private static Random _rng = new Random();
+    [Inject] private IObjectResolver resolver;
+    [Inject] private GameEngine gameEngine;
+    [Inject] private UIController uiController;
+    [Inject] private PartyInfo partyInfo;
+    [Inject] private GameDataBase GameData;
+    private bool _initializedNewTurn = false;
+    private Dictionary<int, PlayerCharacter> _battleParty = new Dictionary<int, PlayerCharacter>();
+    private EnemyCharacter _currentEnemy;
+    private Character _currentCharacterTurn;
+    private List<Character> _characterTurns = new List<Character>();
+    private List<Character> _targets = new List<Character>();
+    private List<int> _actionEffectValues = new List<int>();
+    private List<TemporaryBuff> _temporaryBuffValues = new List<TemporaryBuff>();
+    private System.Random _rng = new System.Random();
 
-    public static void StartBattle()
+    public void StartBattle()
     {
       ResetData();
       _currentEnemy.PrintModel();
-      UIController.Active.WriteLine($"A {_currentEnemy.Name} has appeared!");
-      GameEngine.Active.Pause(1600);
+      this.uiController.WriteLine($"A {_currentEnemy.Name} has appeared!");
+      this.gameEngine.Pause(1600);
       StartNewRound();
     }
 
-    private static EnemyCharacter GetNewEnemy()
+    private EnemyCharacter GetNewEnemy()
     {
       List<EnemyCharacter> possibleEnemies = new List<EnemyCharacter>();
 
-      switch (GameEngine.Active.Difficulty)
+      switch (this.gameEngine.Difficulty)
       {
         case Difficulty.Easy:
           possibleEnemies.AddRange(GameData.EnemyCharacters[Difficulty.Easy]);
@@ -51,7 +57,7 @@ namespace RPGGame
       return possibleEnemies[_rng.Next(0, maxIndex)];
     }
 
-    private static async void ProcessBattleTurn()
+    private async void ProcessBattleTurn()
     {
       if (!_initializedNewTurn)
       {
@@ -63,14 +69,14 @@ namespace RPGGame
         _initializedNewTurn = true;
       }
 
-      UIController.Active.Clear();
+      this.uiController.Clear();
       _currentEnemy.PrintModel();
       _currentEnemy.PrintBuffs();
-      UIController.Active.WriteLine();
+      this.uiController.WriteLine();
 
       PreventMultipleKeyPresses();
 
-      UIController.Active.WriteColorText(ConsoleColor.Blue, $"It is {_currentCharacterTurn.Name}'s turn.");
+      this.uiController.WriteColorText(ConsoleColor.Blue, $"It is {_currentCharacterTurn.Name}'s turn.");
 
       if (_currentCharacterTurn == _currentEnemy)
       {
@@ -78,25 +84,25 @@ namespace RPGGame
         return;
       }
 
-      UIController.Active.WriteColorText(ConsoleColor.Magenta, $"[A] ", false);
-      UIController.Active.WriteLine("Attack");
-      UIController.Active.WriteColorText(ConsoleColor.Magenta, $"[D] ", false);
-      UIController.Active.WriteLine("Defend");
-      UIController.Active.WriteColorText(ConsoleColor.Magenta, $"[S] ", false);
-      UIController.Active.WriteLine("Use Special Ability");
-      UIController.Active.WriteColorText(ConsoleColor.Magenta, $"[I] ", false);
-      UIController.Active.WriteLine("Use Item");
-      UIController.Active.WriteLine();
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[A] ", false);
+      this.uiController.WriteLine("Attack");
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[D] ", false);
+      this.uiController.WriteLine("Defend");
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[S] ", false);
+      this.uiController.WriteLine("Use Special Ability");
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[I] ", false);
+      this.uiController.WriteLine("Use Item");
+      this.uiController.WriteLine();
 
       foreach (var character in _battleParty.Values)
       {
         character.PrintBattleInfo();
       }
 
-      UIController.Active.WriteLine();
-      UIController.Active.WriteLine("What is your command?");
+      this.uiController.WriteLine();
+      this.uiController.WriteLine("What is your command?");
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
           switch (Console.ReadKey(true).Key)
           {
@@ -118,36 +124,36 @@ namespace RPGGame
         });
     }
 
-    private static async void Defend()
+    private async void Defend()
     {
       _currentCharacterTurn.IsDefending = true;
 
-      UIController.Active.WriteLine($"{_currentCharacterTurn.Name} is defending.");
+      this.uiController.WriteLine($"{_currentCharacterTurn.Name} is defending.");
 
-      await GameEngine.Active.Pause();
+      await this.gameEngine.Pause();
       NextCharacterTurn();
     }
 
-    private static void ShowAbilitiesList()
+    private void ShowAbilitiesList()
     {
       Dictionary<ConsoleKey, PlayerAbility> abilities = (_currentCharacterTurn as PlayerCharacter).SpecialAbilities;
 
-      UIController.Active.WriteLine($"{_currentCharacterTurn.Name}'s Abilities:");
+      this.uiController.WriteLine($"{_currentCharacterTurn.Name}'s Abilities:");
 
       foreach (var ability in abilities.Values)
       {
         double cost = ability.PoolUsed == PoolUsed.HP ? Math.Ceiling(ability.Cost * _currentCharacterTurn.MaxHealth) : ability.Cost;
 
-        UIController.Active.WriteColorText(ConsoleColor.Magenta, $"[{GameEngine.Active.ConsoleKeyToInt(ability.KeyBind)}] ", false);
+        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{this.gameEngine.ConsoleKeyToInt(ability.KeyBind)}] ", false);
         ability.PrintAbilityInfo(_currentCharacterTurn as PlayerCharacter);
-        UIController.Active.WriteLine();
+        this.uiController.WriteLine();
       }
 
-      UIController.Active.WriteLine();
-      UIController.Active.WriteColorText(ConsoleColor.Magenta, $"[Esc] ", false);
-      UIController.Active.WriteLine("Return to previous menu");
+      this.uiController.WriteLine();
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[Esc] ", false);
+      this.uiController.WriteLine("Return to previous menu");
 
-      while (GameEngine.Active.CurrentGameState == GameState.Battle)
+      while (this.gameEngine.CurrentGameState == GameState.Battle)
       {
         ConsoleKey keyPressed = Console.ReadKey(true).Key;
 
@@ -170,7 +176,7 @@ namespace RPGGame
       }
     }
 
-    private static async void UseAbility(ConsoleKey abilityKey = ConsoleKey.D0)
+    private async void UseAbility(ConsoleKey abilityKey = ConsoleKey.D0)
     {
       PlayerAbility ability;
 
@@ -206,27 +212,27 @@ namespace RPGGame
         (_currentCharacterTurn as PlayerCharacter).CurrentMana -= ability.GetAbilityCost(_currentCharacterTurn as PlayerCharacter);
       }
 
-      UIController.Active.WriteLine($"{_currentCharacterTurn.Name} {ability.ActionText}");
+      this.uiController.WriteLine($"{_currentCharacterTurn.Name} {ability.ActionText}");
 
-      await GameEngine.Active.Pause();
+      await this.gameEngine.Pause();
       CompleteAction(ability);
     }
 
-    private static void ShowItemList()
+    private void ShowItemList()
     {
-      UIController.Active.WriteLine("Item Inventory:");
-      foreach (var item in PartyInfo.UsableItems)
+      this.uiController.WriteLine("Item Inventory:");
+      foreach (var item in this.partyInfo.UsableItems)
       {
-        UIController.Active.WriteColorText(ConsoleColor.Magenta, $"[{GameEngine.Active.ConsoleKeyToInt(item.Key.KeyBind)}] ", false);
-        UIController.Active.WriteLine($"{item.Key.Name} x{item.Value} - {item.Key.Description}");
+        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{this.gameEngine.ConsoleKeyToInt(item.Key.KeyBind)}] ", false);
+        this.uiController.WriteLine($"{item.Key.Name} x{item.Value} - {item.Key.Description}");
       }
       Console.ForegroundColor = ConsoleColor.Magenta;
-      UIController.Active.Write("[Esc] ");
+      this.uiController.Write("[Esc] ");
       Console.ForegroundColor = ConsoleColor.White;
-      UIController.Active.WriteLine("Return to previous menu");
+      this.uiController.WriteLine("Return to previous menu");
 
 
-      while (GameEngine.Active.CurrentGameState == GameState.Battle)
+      while (this.gameEngine.CurrentGameState == GameState.Battle)
       {
         ConsoleKey keyPressed = Console.ReadKey(true).Key;
 
@@ -236,41 +242,41 @@ namespace RPGGame
           return;
         }
 
-        if (GameData.Consumables.ContainsKey(keyPressed) && PartyInfo.UsableItems.ContainsKey(GameData.Consumables[keyPressed]))
+        if (GameData.Consumables.ContainsKey(keyPressed) && this.partyInfo.UsableItems.ContainsKey(GameData.Consumables[keyPressed]))
         {
           UseItem(keyPressed);
         }
       }
     }
 
-    private static void UseItem(ConsoleKey keyPressed)
+    private void UseItem(ConsoleKey keyPressed)
     {
       Consumable itemUsed = GameData.Consumables[keyPressed];
 
       ConfirmTarget(itemUsed);
-      PartyInfo.UsableItems[itemUsed]--;
+      this.partyInfo.UsableItems[itemUsed]--;
 
-      if (PartyInfo.UsableItems[itemUsed] <= 0)
+      if (this.partyInfo.UsableItems[itemUsed] <= 0)
       {
-        PartyInfo.UsableItems.Remove(itemUsed);
+        this.partyInfo.UsableItems.Remove(itemUsed);
       }
 
       CompleteAction(itemUsed);
     }
 
-    private static void GetDamage(double power, AttackType attacktype, Element element)
+    private void GetDamage(double power, AttackType attacktype, Element element)
     {
       if (_targets[0] == _currentEnemy)
       {
         if (_targets[0].Weaknesses.Contains(element))
         {
           power *= 1.5;
-          GameEngine.Active.Pause();
+          this.gameEngine.Pause();
         }
         else if (_targets[0].Resistances.Contains(element))
         {
           power *= .5;
-          GameEngine.Active.Pause();
+          this.gameEngine.Pause();
         }
       }
 
@@ -321,7 +327,7 @@ namespace RPGGame
       }
     }
 
-    private static void GetBuffAmount(SpecialAbility ability, double power)
+    private void GetBuffAmount(SpecialAbility ability, double power)
     {
       foreach (var statToBuff in ability.StatModifiers)
       {
@@ -349,7 +355,7 @@ namespace RPGGame
       }
     }
 
-    private static bool Dodged(Character target)
+    private bool Dodged(Character target)
     {
       int chanceToHit = 70;
       chanceToHit += _currentCharacterTurn.Dexterity - target.Agility;
@@ -362,7 +368,7 @@ namespace RPGGame
       return true;
     }
 
-    private static void ProcessEnemyTurn()
+    private void ProcessEnemyTurn()
     {
       EnemyAbility abilityUsed = GetEnemyAbilityToUse();
 
@@ -377,15 +383,15 @@ namespace RPGGame
       GetEnemyTarget(abilityUsed);
       GetDamage(abilityPower, abilityUsed.AttackType, abilityUsed.Element);
 
-      UIController.Active.WriteLine($"{_currentEnemy.Name} {abilityUsed.ActionText}");
+      this.uiController.WriteLine($"{_currentEnemy.Name} {abilityUsed.ActionText}");
 
-      GameEngine.Active.Pause();
+      this.gameEngine.Pause();
 
       CompleteAction(abilityUsed);
       NextCharacterTurn();
     }
 
-    private static EnemyAbility GetEnemyAbilityToUse()
+    private EnemyAbility GetEnemyAbilityToUse()
     {
       int chanceOfUsing = 0;
       int randomNumber = _rng.Next(0, 101);
@@ -403,7 +409,7 @@ namespace RPGGame
       return null;
     }
 
-    private static void GetEnemyTarget(EnemyAbility abilityUsed)
+    private void GetEnemyTarget(EnemyAbility abilityUsed)
     {
       RemoveDeadMembers();
 
@@ -422,7 +428,7 @@ namespace RPGGame
       }
     }
 
-    public static void StartNewRound()
+    public void StartNewRound()
     {
       _characterTurns.Clear();
       _characterTurns.Add(_currentEnemy);
@@ -443,7 +449,7 @@ namespace RPGGame
       NextCharacterTurn();
     }
 
-    private static void NextCharacterTurn()
+    private void NextCharacterTurn()
     {
       CheckIfBattleOver();
       _initializedNewTurn = false;
@@ -466,7 +472,7 @@ namespace RPGGame
       }
     }
 
-    private static async UniTask ConfirmTarget(Consumable itemUsed)
+    private async UniTask ConfirmTarget(Consumable itemUsed)
     {
       switch (itemUsed.TargetType)
       {
@@ -476,29 +482,29 @@ namespace RPGGame
 
           string targetText = _targets[0] == _currentCharacterTurn ? "themself" : _targets[0].Name;
 
-          UIController.Active.WriteLine($"{_currentCharacterTurn.Name} used a {itemUsed.Name.ToLower()} on {targetText}.");
+          this.uiController.WriteLine($"{_currentCharacterTurn.Name} used a {itemUsed.Name.ToLower()} on {targetText}.");
           break;
         case TargetType.Self:
           _targets.Add(_currentCharacterTurn);
           _actionEffectValues.Add(itemUsed.EffectValue);
 
-          UIController.Active.WriteLine($"{_currentCharacterTurn.Name} used a {itemUsed.Name.ToLower()} on themself.");
+          this.uiController.WriteLine($"{_currentCharacterTurn.Name} used a {itemUsed.Name.ToLower()} on themself.");
           break;
         case TargetType.Enemy:
           _targets.Add(_currentEnemy);
           _actionEffectValues.Add(itemUsed.EffectValue);
 
-          UIController.Active.WriteLine($"{_currentCharacterTurn.Name} used a {itemUsed.Name.ToLower()} on {_currentEnemy.Name}.");
+          this.uiController.WriteLine($"{_currentCharacterTurn.Name} used a {itemUsed.Name.ToLower()} on {_currentEnemy.Name}.");
           break;
         case TargetType.Party:
           foreach (var playerCharacter in _battleParty) { _targets.Add(playerCharacter.Value); _actionEffectValues.Add(itemUsed.EffectValue); }
 
-          UIController.Active.WriteLine($"{_currentCharacterTurn.Name} used a {itemUsed.Name.ToLower()} on the party.");
+          this.uiController.WriteLine($"{_currentCharacterTurn.Name} used a {itemUsed.Name.ToLower()} on the party.");
           break;
       }
     }
 
-    private static async UniTask ConfirmTarget(PlayerAbility ability)
+    private async UniTask ConfirmTarget(PlayerAbility ability)
     {
       switch (ability.TargetType)
       {
@@ -517,18 +523,18 @@ namespace RPGGame
       }
     }
 
-    private async static UniTask<Character> PickTarget(TargetType targetType)
+    private async UniTask<Character> PickTarget(TargetType targetType)
     {
       Character target = null;
 
       foreach (var character in _battleParty)
       {
-        UIController.Active.WriteLine($"[{character.Key}] {character.Value.Name} HP: {character.Value.CurrentHealth}/{character.Value.MaxHealth} MP: {character.Value.CurrentMana}/{character.Value.MaxMana}");
+        this.uiController.WriteLine($"[{character.Key}] {character.Value.Name} HP: {character.Value.CurrentHealth}/{character.Value.MaxHealth} MP: {character.Value.CurrentMana}/{character.Value.MaxMana}");
       }
 
-      await GameEngine.Active.WaitForPlayerKeyPress(() =>
+      await this.gameEngine.WaitForPlayerKeyPress(() =>
           {
-            string keyPressed = GameEngine.Active.CurrentKeyPressed;
+            string keyPressed = this.gameEngine.CurrentKeyPressed;
 
             if (int.TryParse(keyPressed, out int result) && _battleParty.ContainsKey(result))
             {
@@ -542,33 +548,33 @@ namespace RPGGame
       return target;
     }
 
-    private static void CompleteAction(Consumable itemUsed)
+    private void CompleteAction(Consumable itemUsed)
     {
       switch (itemUsed.SpecialEffect)
       {
         case Effect.HealHP:
-          Effects.HealHP(_targets, itemUsed.EffectValue);
+          this.resolver.Resolve<Effects>().HealHP(_targets, itemUsed.EffectValue);
           break;
         case Effect.HealMP:
-          Effects.HealMP(_targets[0] as PlayerCharacter, itemUsed.EffectValue);
+          this.resolver.Resolve<Effects>().HealMP(_targets[0] as PlayerCharacter, itemUsed.EffectValue);
           break;
       }
 
       NextCharacterTurn();
     }
 
-    private static void CompleteAction(SpecialAbility ability)
+    private void CompleteAction(SpecialAbility ability)
     {
       switch (ability.Effect)
       {
         case Effect.HealHP:
-          Effects.HealHP(_targets, (int)ability.GetAbilityPower(_currentCharacterTurn));
+          this.resolver.Resolve<Effects>().HealHP(_targets, (int)ability.GetAbilityPower(_currentCharacterTurn));
           break;
         case Effect.DamageHp:
-          Effects.DamageHP(_targets, _actionEffectValues);
+          this.resolver.Resolve<Effects>().DamageHP(_targets, _actionEffectValues);
           break;
         case Effect.Buff:
-          Effects.ModifyStats(_targets, _temporaryBuffValues);
+          this.resolver.Resolve<Effects>().ModifyStats(_targets, _temporaryBuffValues);
           break;
       }
 
@@ -577,7 +583,7 @@ namespace RPGGame
       NextCharacterTurn();
     }
 
-    private static void CheckIfBattleOver()
+    private void CheckIfBattleOver()
     {
       if (_battleParty.Count <= 0)
       {
@@ -592,9 +598,9 @@ namespace RPGGame
       }
     }
 
-    private static void EndBattle(bool playerVictorious)
+    private void EndBattle(bool playerVictorious)
     {
-      UIController.Active.Clear();
+      this.uiController.Clear();
 
       foreach (var player in _battleParty)
       {
@@ -604,7 +610,7 @@ namespace RPGGame
       if (playerVictorious)
       {
         // ascii art from http://www.asciiworld.com/-Death-Co-.html
-        UIController.Active.WriteLine(@"
+        this.uiController.WriteLine(@"
 	
  _;~)                  (~;_
 (   |                  |   )
@@ -619,31 +625,31 @@ namespace RPGGame
   (~  ;               ;  ~)
    -;_)               (_;-
 ");
-        UIController.Active.WriteLine("The party has been slain. Your journey is over...");
+        this.uiController.WriteLine("The party has been slain. Your journey is over...");
 
-        GameEngine.Active.Pause(3200);
-        UIController.Active.Clear();
-        GameEngine.Active.StartGame();
+        this.gameEngine.Pause(3200);
+        this.uiController.Clear();
+        this.gameEngine.StartGame();
       }
       else
       {
-        UIController.Active.WriteLine("The party has emerged victorious!");
+        this.uiController.WriteLine("The party has emerged victorious!");
 
-        PartyInfo.UpdateGameStats(_currentEnemy.ExperienceReward, _currentEnemy.GoldReward);
+        this.partyInfo.UpdateGameStats(_currentEnemy.ExperienceReward, _currentEnemy.GoldReward);
         AddRewards();
-        GameEngine.Active.Pause(1800);
-        GameEngine.Active.SwitchGameState(GameState.Menu);
+        this.gameEngine.Pause(1800);
+        this.gameEngine.SwitchGameState(GameState.Menu);
       }
     }
 
-    private static void AddRewards()
+    private void AddRewards()
     {
       int experienceReward = (int)_currentEnemy.ExperienceReward / _battleParty.Count;
 
-      UIController.Active.WriteLine($"The party gained {experienceReward} experience.");
-      GameEngine.Active.Pause();
-      UIController.Active.WriteLine($"The party gained {_currentEnemy.GoldReward} gold.");
-      GameEngine.Active.Pause();
+      this.uiController.WriteLine($"The party gained {experienceReward} experience.");
+      this.gameEngine.Pause();
+      this.uiController.WriteLine($"The party gained {_currentEnemy.GoldReward} gold.");
+      this.gameEngine.Pause();
 
 
       foreach (var character in _battleParty.Values)
@@ -651,10 +657,10 @@ namespace RPGGame
         character.UpdateExperience(experienceReward);
       }
 
-      PartyInfo.Gold += _currentEnemy.GoldReward;
+      this.partyInfo.Gold += _currentEnemy.GoldReward;
     }
 
-    private static void RemoveDeadMembers()
+    private void RemoveDeadMembers()
     {
       int partyMemberIndex = 1;
 
@@ -669,7 +675,7 @@ namespace RPGGame
       }
     }
 
-    private static void ResetData()
+    private void ResetData()
     {
       int partyMemberIndex = 1;
 
@@ -688,7 +694,7 @@ namespace RPGGame
       _currentEnemy.CharacterStatus = CharacterStatus.Alive;
     }
 
-    private static void PreventMultipleKeyPresses()
+    private void PreventMultipleKeyPresses()
     {
       // Thanks to CoolDadTx for this https://social.msdn.microsoft.com/Forums/vstudio/en-US/9da27ed7-1453-414c-b17f-b056b83f5a21/ignoringdiscarding-stacked-keyboard-inputs-after-a-threadsleep?forum=csharpgeneral
       while (Console.KeyAvailable)

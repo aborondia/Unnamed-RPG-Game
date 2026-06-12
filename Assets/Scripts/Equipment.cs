@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using VContainer;
 
 namespace RPGGame
 {
@@ -12,7 +12,8 @@ namespace RPGGame
   }
   public class Equipment
   {
-    public static GameDataBase GameData = GameEngine.Active.GameData;
+    private GameEngine gameEngine;
+    private UIController uiController => gameEngine.UIController;
     private int _price;
     private EquipmentType _equipmentType;
     private string _name;
@@ -27,8 +28,9 @@ namespace RPGGame
     public int Price { get => this._price; }
     public int TradeInPrice { get => this._price / 2; }
 
-    public Equipment(int cost, EquipmentType equipmentType, string name, PlayerProfession canBeUsedBy, List<StatModifier> statModifiers, Element element = Element.None)
+    public Equipment(GameEngine gameEngine, int cost, EquipmentType equipmentType, string name, PlayerProfession canBeUsedBy, List<StatModifier> statModifiers, Element element = Element.None)
     {
+      this.gameEngine = gameEngine;
       this._price = cost;
       this._equipmentType = equipmentType;
       this._name = name;
@@ -39,20 +41,20 @@ namespace RPGGame
 
     public void PrintEquipmentInfo(bool tradeInCost = true)
     {
-      UIController.Active.Write($"{this._equipmentType}: {this._name} -");
+      this.uiController.Write($"{this._equipmentType}: {this._name} -");
 
       foreach (StatModifier statModifier in this._statModifiers)
       {
-        UIController.Active.Write($" {statModifier.StatModifierType}+{statModifier.StatModifierValue} ");
+        this.uiController.Write($" {statModifier.StatModifierType}+{statModifier.StatModifierValue} ");
       }
 
       if (tradeInCost)
       {
-        UIController.Active.Write($"Trade in price: {this.TradeInPrice}G");
+        this.uiController.Write($"Trade in price: {this.TradeInPrice}G");
       }
       else
       {
-        UIController.Active.Write($"Price: {this._price}G");
+        this.uiController.Write($"Price: {this._price}G");
       }
     }
   }

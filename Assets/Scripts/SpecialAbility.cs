@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using VContainer;
 
 namespace RPGGame
 {
@@ -17,8 +17,9 @@ namespace RPGGame
     Agility,
     Dexterity
   }
-   public class SpecialAbility
+  public class SpecialAbility
   {
+    [Inject] protected UIController uiController;
     protected string _name;
     protected string _actionText;
     protected string _description;
@@ -30,7 +31,6 @@ namespace RPGGame
     protected Effect _effect;
     protected Dictionary<StatModifierType, int> _statModifiers;
     protected int _duration;
-    // add custom text
     public string Name { get => this._name; }
     public string ActionText { get => this._actionText; }
     public string Description { get => this._description; }
@@ -133,36 +133,36 @@ base(name, actionText, description, statMultiplier, statUsed, element, attacktyp
         Console.ForegroundColor = ConsoleColor.DarkGray;
       }
 
-      UIController.Active.Write($"{this._name} - {cost}{this._poolUsed} ");
-      UIController.Active.Write("- Element: ");
+      this.uiController.Write($"{this._name} - {cost}{this._poolUsed} ");
+      this.uiController.Write("- Element: ");
       switch (this._element)
       {
         case Element.None:
-          UIController.Active.Write("None ");
+          this.uiController.Write("None ");
           break;
         case Element.Fire:
-          UIController.Active.WriteColorText(ConsoleColor.DarkRed, "Fire ", false);
+          this.uiController.WriteColorText(ConsoleColor.DarkRed, "Fire ", false);
           break;
         case Element.Water:
-          UIController.Active.WriteColorText(ConsoleColor.DarkBlue, "Water ", false);
+          this.uiController.WriteColorText(ConsoleColor.DarkBlue, "Water ", false);
           break;
         case Element.Wind:
-          UIController.Active.WriteColorText(ConsoleColor.DarkGreen, "Wind ", false);
+          this.uiController.WriteColorText(ConsoleColor.DarkGreen, "Wind ", false);
           break;
         case Element.Earth:
-          UIController.Active.WriteColorText(ConsoleColor.DarkYellow, "Earth ", false);
+          this.uiController.WriteColorText(ConsoleColor.DarkYellow, "Earth ", false);
           break;
         case Element.Dark:
-          UIController.Active.WriteColorText(ConsoleColor.DarkGray, "Dark ", false);
+          this.uiController.WriteColorText(ConsoleColor.DarkGray, "Dark ", false);
           break;
         case Element.Light:
-          UIController.Active.WriteColorText(ConsoleColor.Yellow, "Light ", false);
+          this.uiController.WriteColorText(ConsoleColor.Yellow, "Light ", false);
           break;
       }
-      UIController.Active.Write($"- Stat Used: {this._statUsed} ");
+      this.uiController.Write($"- Stat Used: {this._statUsed} ");
 
 
-      UIController.Active.Write($"- {this._description}");
+      this.uiController.Write($"- {this._description}");
       Console.ForegroundColor = ConsoleColor.White;
     }
 

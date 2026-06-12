@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VContainer;
 
 namespace RPGGame
 {
@@ -14,9 +16,11 @@ namespace RPGGame
   }
   public class GameEngine : MonoBehaviour
   {
-    public static GameEngine Active;
+    [Inject] private IObjectResolver resolver;
+    [Inject] private UIController uiController;
+    public UIController UIController => uiController;
+    public GameDataBase GameData => resolver.Resolve<GameDataBase>();
     public delegate bool WaitForPlayerActionDelegate();
-    public GameDataBase GameData;
     public Difficulty Difficulty;
     private int _defaultPauseDuration = 1000;
     private GameState _currentGameState;
@@ -24,16 +28,15 @@ namespace RPGGame
     public int PauseDuration { get => _defaultPauseDuration; }
     private string currentKeyPressed;
     public string CurrentKeyPressed => currentKeyPressed;
+    private CancellationToken onDestroyToken;
 
     private void Awake()
     {
-      if (Active != null)
-      {
-        Destroy(Active);
-      }
+      onDestroyToken = this.GetCancellationTokenOnDestroy();
+    }
 
-      Active = this;
-
+    private void Start()
+    {
       StartGame();
     }
 
@@ -71,18 +74,13 @@ namespace RPGGame
     {
       string keyPress = String.Empty;
 
-      if (GameData == null)
-      {
-        GameData = new GameDataBase();
-      }
-
-      UIController.Active.WriteLine("Welcome to the world of Unnamed RPG Project!");
+      this.uiController.WriteLine("Welcome to the world of Unnamed RPG Project!");
       await Pause(3000);
-      UIController.Active.Clear();
+      this.uiController.Clear();
 
-      UIController.Active.WriteLine("Do you want to create your own party or use the pre-made party?");
-      UIController.Active.WriteLine("[1] Use pre-made party.");
-      UIController.Active.WriteLine("[2] Create my own.");
+      this.uiController.WriteLine("Do you want to create your own party or use the pre-made party?");
+      this.uiController.WriteLine("[1] Use pre-made party.");
+      this.uiController.WriteLine("[2] Create my own.");
 
       await WaitForPlayerKeyPress(() =>
       {
@@ -102,10 +100,10 @@ namespace RPGGame
       switch (keyPress)
       {
         case "1":
-          await GameData.InitializeData(true);
+          await this.GameData.InitializeData(true);
           break;
         case "2":
-          await GameData.InitializeData(false);
+          await this.GameData.InitializeData(false);
           break;
       }
 
@@ -116,34 +114,36 @@ namespace RPGGame
     {
       _currentGameState = newState;
 
-      UIController.Active.Clear();
+      this.uiController.Clear();
 
       switch (_currentGameState)
       {
         case GameState.Menu:
-          Menu.StartMainMenu();
+          this.resolver.Resolve<Menu>().StartMainMenu();
           return;
         case GameState.Map:
-          Map.StartMap();
+          this.resolver.Resolve<Map>().StartMap();
           return;
         case GameState.Town:
-          Town.StartTown();
+          this.resolver.Resolve<Town>().StartTown();
           return;
         case GameState.Battle:
-          Battle.StartBattle();
+          this.resolver.Resolve<Battle>().StartBattle();
           return;
       }
     }
 
     public async UniTask Pause(int duration = 0)
     {
+      // public static UniTask Delay(int millisecondsDelay, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false)
+
       if (duration == 0)
       {
-        await UniTask.Delay(_defaultPauseDuration);
+        await UniTask.Delay(_defaultPauseDuration, false, PlayerLoopTiming.Update, this.destroyCancellationToken);
       }
       else
       {
-        await UniTask.Delay(duration);
+        await UniTask.Delay(duration, false, PlayerLoopTiming.Update, this.destroyCancellationToken);
       }
     }
 
@@ -173,8 +173,8 @@ namespace RPGGame
 
       while (!action.Invoke())
       {
-        UIController.Active.ScrollToEnd();
-        await UniTask.Yield();
+        this.uiController.ScrollToEnd();
+        await UniTask.Yield(this.destroyCancellationToken);
       }
 
       this.currentKeyPressed = String.Empty;
@@ -183,24 +183,24 @@ namespace RPGGame
     public async UniTask<string> WaitForPlayerInput()
     {
       await Pause(250);
-      UIController.Active.ShowUserInputField();
+      this.uiController.ShowUserInputField();
 
-      while (String.IsNullOrWhiteSpace(UIController.Active.UserInputField.value) || this.currentKeyPressed != "enter")
+      while (String.IsNullOrWhiteSpace(this.uiController.UserInputField.value) || this.currentKeyPressed != "enter")
       {
         this.currentKeyPressed = String.Empty;
-        UIController.Active.ScrollToEnd();
-        await UniTask.Yield();
+        this.uiController.ScrollToEnd();
+        await UniTask.Yield(this.destroyCancellationToken);
       }
 
-      UIController.Active.HideUserInputField();
-      return UIController.Active.UserInputField.value;
+      this.uiController.HideUserInputField();
+      return this.uiController.UserInputField.value;
     }
 
     public async UniTask PerformActionWhenTrue(WaitForPlayerActionDelegate waitDelegate, Action action)
     {
       while (!waitDelegate.Invoke())
       {
-        await UniTask.Yield();
+        await UniTask.Yield(this.destroyCancellationToken);
       }
 
       action.Invoke();

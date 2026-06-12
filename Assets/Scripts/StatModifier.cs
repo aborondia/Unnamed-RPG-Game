@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RPGGame
+﻿namespace RPGGame
 {
   public enum StatModifierType
   {
@@ -19,7 +15,6 @@ namespace RPGGame
   }
   public class StatModifier
   {
-    public static GameDataBase GameData = GameEngine.Active.GameData;
     private StatModifierType _statModifierType;
     private int _statModifierValue;
 
