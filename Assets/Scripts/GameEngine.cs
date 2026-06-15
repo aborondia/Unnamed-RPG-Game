@@ -48,35 +48,30 @@ namespace RPGGame
     {
       if (Keyboard.current.escapeKey.isPressed)
       {
-        this.currentKeyPressed = "escape";
+        SetCurrentKey("escape");
       }
       else if (Keyboard.current.spaceKey.isPressed)
       {
-        this.currentKeyPressed = "space";
+        SetCurrentKey("space");
       }
       else if (Keyboard.current.enterKey.isPressed)
       {
-        this.currentKeyPressed = "enter";
+        SetCurrentKey("enter");
       }
       else
       {
-        this.currentKeyPressed = value.ToString();
-        switch (value)
-        {
-          case 'm':
-            this.resolver.Resolve<PartyInfo>().PartyMembers[0].CharacterStatus = CharacterStatus.Dead;
-            break;
-          case 'n':
-            this.resolver.Resolve<PartyInfo>().PartyMembers[1].CharacterStatus = CharacterStatus.Dead;
-            break;
-          case 'b':
-            this.resolver.Resolve<PartyInfo>().PartyMembers[2].CharacterStatus = CharacterStatus.Dead;
-            break;
-          case 'v':
-            this.resolver.Resolve<PartyInfo>().PartyMembers[3].CharacterStatus = CharacterStatus.Dead;
-            break;
-        }
+        SetCurrentKey(value.ToString());
       }
+    }
+
+    public void SetCurrentKey(string value)
+    {
+      if (String.IsNullOrWhiteSpace(value))
+      {
+        return;
+      }
+
+      this.currentKeyPressed = value.ToLower();
     }
 
     public async void StartGame()
@@ -88,8 +83,8 @@ namespace RPGGame
       this.uiController.Clear();
 
       this.uiController.WriteLine("Do you want to create your own party or use the pre-made party?");
-      this.uiController.WriteLine("[1] Use pre-made party.");
-      this.uiController.WriteLine("[2] Create my own.");
+      this.uiController.WriteLine("[1] Use pre-made party.", "1");
+      this.uiController.WriteLine("[2] Create my own.", "2");
 
       await WaitForPlayerKeyPress(() =>
       {

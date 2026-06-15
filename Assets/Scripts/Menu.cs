@@ -19,11 +19,11 @@ namespace RPGGame
     {
       this.uiController.WriteLine("Hello Adventurers. What would you like to do?");
       this.uiController.WriteLine();
-      this.uiController.WriteLine("[1] Go to Adventure Town");
-      this.uiController.WriteLine("[2] Decide where to adventure");
-      this.uiController.WriteLine("[3] View your party");
-      this.uiController.WriteLine("[4] View game stats");
-      this.uiController.WriteLine("[5] Cheat");
+      this.uiController.WriteLine("[1] Go to Adventure Town", "1");
+      this.uiController.WriteLine("[2] Decide where to adventure", "2");
+      this.uiController.WriteLine("[3] View your party", "3");
+      this.uiController.WriteLine("[4] View game stats", "4");
+      this.uiController.WriteLine("[5] Cheat", "5");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
         {

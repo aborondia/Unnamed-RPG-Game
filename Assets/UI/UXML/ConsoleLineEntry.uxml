@@ -4,5 +4,6 @@
         <ui:VisualElement name="label-container" class="console-line-entry-label-container">
             <ui:Label text="Text" name="label" class="label-white console-line-entry-label"/>
         </ui:VisualElement>
+        <CustomButton name="console-button" class="console-button"/>
     </ui:VisualElement>
 </ui:UXML>

@@ -62,7 +62,7 @@ namespace RPGGame
 
       foreach (PlayerCharacter character in _partyMembers)
       {
-        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{keyIndex++}]", true);
+        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{keyIndex++}]", true, $"{keyIndex - 1}");
 
         if (character.CharacterStatus == CharacterStatus.Dead)
         {
@@ -75,7 +75,7 @@ namespace RPGGame
         }
       }
 
-      this.uiController.WriteLine("[Esc] Return to menu");
+      this.uiController.WriteLine("[Esc] Return to menu", "escape");
 
       if (_usableItems.Count > 0)
       {
@@ -119,7 +119,7 @@ namespace RPGGame
       this.uiController.Clear();
       character.PrintStats();
       this.uiController.WriteLine();
-      this.uiController.WriteLine("Press escape to return to party menu.");
+      this.uiController.WriteLine("[Esc] Return to party menu.", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
@@ -145,7 +145,7 @@ namespace RPGGame
       this.uiController.WriteLine($"Total Times a Party Member Has Been Slain: {_partyMembersSlain}");
       this.uiController.WriteLine(timePlayedText);
       this.uiController.WriteLine();
-      this.uiController.WriteLine("Press escape to return to menu.");
+      this.uiController.WriteLine("[Esc] Return to menu.", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
          {
@@ -176,10 +176,10 @@ namespace RPGGame
     public async void Cheat()
     {
       string keyPressed = String.Empty;
-      this.uiController.WriteLine("[1] Max Gold");
-      this.uiController.WriteLine("[2] Max Character Levels");
-      this.uiController.WriteLine("[3] Armed and Dangerous");
-      this.uiController.WriteLine("[Esc] On second thought...");
+      this.uiController.WriteLine("[1] Max Gold", "1");
+      this.uiController.WriteLine("[2] Max Character Levels", "2");
+      this.uiController.WriteLine("[3] Armed and Dangerous", "3");
+      this.uiController.WriteLine("[Esc] On second thought...", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
         {

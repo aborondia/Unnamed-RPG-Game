@@ -20,12 +20,12 @@ namespace RPGGame
     {
       this.uiController.Clear();
       this.uiController.WriteLine("Where would you like to go?");
-      this.uiController.WriteLine("[1] Inn");
-      this.uiController.WriteLine("[2] Arms Dealer");
-      this.uiController.WriteLine("[3] Apothecary");
-      this.uiController.WriteLine("[4] Doctor");
+      this.uiController.WriteLine("[1] Inn", "1");
+      this.uiController.WriteLine("[2] Arms Dealer", "2");
+      this.uiController.WriteLine("[3] Apothecary", "3");
+      this.uiController.WriteLine("[4] Doctor", "4");
       //this.uiController.WriteLine("[5] Adventurer's Guild"); - sorry, I didn't have enough time to implement this
-      this.uiController.WriteLine("[Esc] Return to menu");
+      this.uiController.WriteLine("[Esc] Return to menu", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
@@ -61,8 +61,8 @@ namespace RPGGame
       this.uiController.WriteLine("How can I help you today?");
       this.uiController.WriteLine();
       this.uiController.WriteLine($"Party Gold: {this.partyInfo.Gold}");
-      this.uiController.WriteLine($"[Space] Rest at the inn - {costToRest} gold");
-      this.uiController.WriteLine($"[Esc] Return to town");
+      this.uiController.WriteLine($"[Space] Rest at the inn - {costToRest} gold", "space");
+      this.uiController.WriteLine($"[Esc] Return to town", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
@@ -133,11 +133,11 @@ namespace RPGGame
       this.uiController.WriteLine();
       this.uiController.WriteLine("Who would you like to buy new equipment for?");
       this.uiController.WriteLine();
-      this.uiController.WriteLine($"[1] {this.partyInfo.PartyMembers[0].Name}");
-      this.uiController.WriteLine($"[2] {this.partyInfo.PartyMembers[1].Name}");
-      this.uiController.WriteLine($"[3] {this.partyInfo.PartyMembers[2].Name}");
-      this.uiController.WriteLine($"[4] {this.partyInfo.PartyMembers[3].Name}");
-      this.uiController.WriteLine($"[Esc] Return to town");
+      this.uiController.WriteLine($"[1] {this.partyInfo.PartyMembers[0].Name}", "1");
+      this.uiController.WriteLine($"[2] {this.partyInfo.PartyMembers[1].Name}", "2");
+      this.uiController.WriteLine($"[3] {this.partyInfo.PartyMembers[2].Name}", "3");
+      this.uiController.WriteLine($"[4] {this.partyInfo.PartyMembers[3].Name}", "4");
+      this.uiController.WriteLine($"[Esc] Return to town", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
@@ -191,12 +191,12 @@ namespace RPGGame
         if (character.PlayerProfession == item.CanBeUsedBy)
         {
           equipmentKeyBinds.Add(keyBind, item);
-          this.uiController.WriteLine($"[{keyBind++}]");
+          this.uiController.WriteLine($"[{keyBind++}]", $"{keyBind - 1}");
           item.PrintEquipmentInfo(false);
         }
       }
 
-      this.uiController.WriteLine("[Esc] Choose someone else");
+      this.uiController.WriteLine("[Esc] Choose someone else", "escape");
 
       string keyPressed;
       await this.gameEngine.WaitForPlayerKeyPress(() =>
@@ -235,11 +235,11 @@ namespace RPGGame
       foreach (Consumable item in GameData.Consumables.Values)
       {
         consumableKeyBinds.Add(keyBind, item);
-        this.uiController.WriteLine($"[{keyBind++}] ");
+        this.uiController.WriteLine($"[{keyBind++}] ", $"{keyBind - 1}");
         item.PrintItemInfo(true);
       }
 
-      this.uiController.WriteLine("[Esc] Return to town");
+      this.uiController.WriteLine("[Esc] Return to town", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
@@ -293,8 +293,8 @@ namespace RPGGame
       this.uiController.WriteLine($"That will be {finalPrice}G with your trade in.");
       this.uiController.WriteLine($"Current Gold: {this.partyInfo.Gold}");
       this.uiController.WriteLine();
-      this.uiController.WriteLine("[Spacebar] Purchase equipment");
-      this.uiController.WriteLine("[Esc] On second thought...");
+      this.uiController.WriteLine("[Space] Purchase equipment", "space");
+      this.uiController.WriteLine("[Esc] On second thought...", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
        {
@@ -384,12 +384,12 @@ namespace RPGGame
       {
         if (character.CharacterStatus == CharacterStatus.Dead)
         {
-          this.uiController.WriteLine($"[{keyBind}] {character.Name} - {GetReviveCost(character)}G");
+          this.uiController.WriteLine($"[{keyBind}] {character.Name} - {GetReviveCost(character)}G", $"{keyBind}");
           deadCharacters.Add(keyBind++, character);
         }
       }
 
-      this.uiController.WriteLine("[Esc] Return to town");
+      this.uiController.WriteLine("[Esc] Return to town", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
       {

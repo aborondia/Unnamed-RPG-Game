@@ -351,7 +351,7 @@ namespace RPGGame
       foreach (PlayerProfession playerProfession in this._playerProfessions)
       {
         availableProfessions.Add(keyBind.ToString(), playerProfession);
-        this.uiController.WriteLine($"[{keyBind++}] {playerProfession.Name}");
+        this.uiController.WriteLine($"[{keyBind++}] {playerProfession.Name}", $"{keyBind - 1}");
       }
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>

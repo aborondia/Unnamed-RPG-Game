@@ -49,34 +49,50 @@ public class UIController : MonoBehaviour
         Clear();
     }
 
-    public Label WriteLine(int value)
-    {
-        return WriteLine(value.ToString());
-    }
-
-    public Label WriteLine(string value = "")
+    public Label WriteLine(string value = "", string callbackKey = "")
     {
         Label label = GetConsoleLabel(true);
         label.AddToClassList(GetFontColorSelector(ConsoleColor.White));
 
         label.text = value;
         this.resolver.Resolve<GameEngine>().PerformActionAfterPause(() => ScrollToEnd(), 50);
+
+        if (!String.IsNullOrWhiteSpace(callbackKey))
+        {
+            SetCallbackKey(label.parent.parent.Q<CustomButton>("console-button"), callbackKey);
+        }
+
         return label;
     }
 
-    public Label Write(string value)
+    public Label Write(string value, string callbackKey = "")
     {
         Label label = GetConsoleLabel(false);
         label.AddToClassList(GetFontColorSelector(ConsoleColor.White));
 
         label.text = value;
 
+        if (!String.IsNullOrWhiteSpace(callbackKey))
+        {
+            SetCallbackKey(label.parent.parent.Q<CustomButton>("console-button"), callbackKey);
+        }
+
         return label;
     }
 
-    public void WriteColorText(ConsoleColor consoleColor, string value, bool newLine = true)
+    private void SetCallbackKey(CustomButton button, string callbackKey)
+    {
+        button.ChangeOnClickReturnValue(callbackKey);
+    }
+
+    public void WriteColorText(ConsoleColor consoleColor, string value, bool newLine = true, string callbackKey = "")
     {
         Label label = newLine ? WriteLine(value) : Write(value);
+
+        if (!String.IsNullOrWhiteSpace(callbackKey))
+        {
+            SetCallbackKey(label.parent.parent.Q<CustomButton>(), callbackKey);
+        }
 
         ColorText(label, consoleColor);
     }
@@ -119,6 +135,7 @@ public class UIController : MonoBehaviour
             if (this.consoleLines.Count <= 0)
             {
                 consoleLine = this.consoleLineTemplate.Instantiate();
+                consoleLine.Q<CustomButton>("console-button").InitializeButton(value => this.resolver.Resolve<GameEngine>().SetCurrentKey(value));
             }
             else
             {
@@ -180,6 +197,7 @@ public class UIController : MonoBehaviour
         foreach (VisualElement consoleLine in this.contentScrollView.contentContainer.Children())
         {
             this.consoleLines.Enqueue(consoleLine);
+            consoleLine.Q<CustomButton>("console-button")?.ClearOnClickReturnValue();
         }
 
         this.enemyModelBuffLabel.text = String.Empty;

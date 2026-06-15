@@ -30,11 +30,11 @@ namespace RPGGame
       string keyPressed = String.Empty;
       this.uiController.WriteLine("Where would you like to look for monsters to slay?");
       this.uiController.WriteLine();
-      this.uiController.WriteLine("[1] Forest of Illusion - Easy");
-      this.uiController.WriteLine("[2] Caves of Despair - Average");
-      this.uiController.WriteLine("[3] Lair of Vile Beasts - Hard");
-      this.uiController.WriteLine("[4] The Underworld - Very Hard");
-      this.uiController.WriteLine("[Esc] Return to menu");
+      this.uiController.WriteLine("[1] Forest of Illusion - Easy", "1");
+      this.uiController.WriteLine("[2] Caves of Despair - Average", "2");
+      this.uiController.WriteLine("[3] Lair of Vile Beasts - Hard", "3");
+      this.uiController.WriteLine("[4] The Underworld - Very Hard", "4");
+      this.uiController.WriteLine("[Esc] Return to menu", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
       {

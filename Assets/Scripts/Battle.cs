@@ -86,13 +86,13 @@ namespace RPGGame
         return;
       }
 
-      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[A] ");
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[A] ", true, "a");
       this.uiController.Write("Attack");
-      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[D] ");
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[D] ", true, "d");
       this.uiController.Write("Defend");
-      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[S] ");
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[S] ", true, "s");
       this.uiController.Write("Use Special Ability");
-      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[I] ");
+      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[I] ", true, "i");
       this.uiController.Write("Use Item");
       this.uiController.WriteLine();
 
@@ -160,12 +160,11 @@ namespace RPGGame
       {
         double cost = ability.PoolUsed == PoolUsed.HP ? Math.Ceiling(ability.Cost * _currentCharacterTurn.MaxHealth) : ability.Cost;
 
-        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{ability.KeyBind}]: ");
+        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{ability.KeyBind}]: ", true, $"{ability.KeyBind}");
         ability.PrintAbilityInfo(_currentCharacterTurn as PlayerCharacter);
       }
 
-      this.uiController.WriteColorText(ConsoleColor.Magenta, $"[Esc] ");
-      this.uiController.Write("Return to previous menu");
+      this.uiController.WriteLine($"[Esc] Return to previous menu", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
@@ -237,6 +236,7 @@ namespace RPGGame
         (_currentCharacterTurn as PlayerCharacter).CurrentMana -= ability.GetAbilityCost(_currentCharacterTurn as PlayerCharacter);
       }
 
+      this.uiController.ClearText();
       this.uiController.WriteLine($"{_currentCharacterTurn.Name} {ability.ActionText}");
 
       await this.gameEngine.Pause();
@@ -252,12 +252,11 @@ namespace RPGGame
 
       foreach (var item in this.partyInfo.UsableItems)
       {
-        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{item.Key.KeyBind}] ");
+        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{item.Key.KeyBind}] ", true, $"{item.Key.KeyBind}");
         this.uiController.Write($"{item.Key.Name} x{item.Value} - {item.Key.Description}");
       }
 
-      this.uiController.WriteColorText(ConsoleColor.Magenta, "[Esc] ");
-      this.uiController.Write("Return to previous menu");
+      this.uiController.WriteLine("[Esc] Return to previous menu", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
       {
@@ -587,12 +586,11 @@ namespace RPGGame
 
       foreach (var character in _battleParty)
       {
-        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{character.Key}]");
+        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{character.Key}]", true, $"{character.Key}");
         this.uiController.Write($" {character.Value.Name} HP: {character.Value.CurrentHealth}/{character.Value.MaxHealth} MP: {character.Value.CurrentMana}/{character.Value.MaxMana}");
       }
 
-      this.uiController.WriteColorText(ConsoleColor.Magenta, "[Esc] ");
-      this.uiController.Write("Return to previous menu");
+      this.uiController.WriteLine("[Esc] Return to previous menu", "escape");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
           {
