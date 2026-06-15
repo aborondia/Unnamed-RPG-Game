@@ -6,6 +6,8 @@ It is an RPG game built using C#, for the C# console. The requirements for the p
 
 I recently ported it over to Unity so I could host it as a WebGL build because why not? There's still a lot of old code form my student days so don't judge too harshly. I've improved since then.
 
+You can play the live version [here](https://andrewbrpggame.netlify.app/).
+
 ## The basic requirements for the project were as follows:
 * Show statistics (games played, won, etc.)
 * Show player inventory, including equipped items
