@@ -7,12 +7,19 @@ namespace RPGGame
 {
   public enum Difficulty
   {
-    Easy,
-    Average,
-    Hard,
-    VeryHard
+    Easy = 0,
+    Average = 1,
+    Hard = 2,
+    VeryHard = 3,
   }
-  public class Map 
+  public enum Shops
+  {
+    Inn = 0,
+    ArmsDealer = 1,
+    Apothecary = 2,
+    Doctor = 3,
+  }
+  public class Map
   {
     [Inject] private GameEngine gameEngine;
     [Inject] private UIController uiController;
@@ -44,6 +51,8 @@ namespace RPGGame
 
         return false;
       });
+
+      this.uiController.WriteLine();
 
       switch (keyPressed)
       {

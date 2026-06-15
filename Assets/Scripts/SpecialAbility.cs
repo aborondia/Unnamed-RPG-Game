@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
 using VContainer;
 
 namespace RPGGame
@@ -19,7 +21,7 @@ namespace RPGGame
   }
   public class SpecialAbility
   {
-    [Inject] protected UIController uiController;
+    protected GameEngine gameEngine;
     protected string _name;
     protected string _actionText;
     protected string _description;
@@ -40,8 +42,9 @@ namespace RPGGame
     public Effect Effect { get => this._effect; }
     public Dictionary<StatModifierType, int> StatModifiers { get => this._statModifiers; }
     public int Duration { get => this._duration; }
-    public SpecialAbility(string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect)
+    public SpecialAbility(GameEngine gameEngine, string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect)
     {
+      this.gameEngine = gameEngine;
       this._name = name;
       this._actionText = actionText;
       this._description = description;
@@ -52,8 +55,9 @@ namespace RPGGame
       this._targetType = targetType;
       this._effect = effect;
     }
-    public SpecialAbility(string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect, Dictionary<StatModifierType, int> statModifiers, int duration)
+    public SpecialAbility(GameEngine gameEngine, string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect, Dictionary<StatModifierType, int> statModifiers, int duration)
     {
+      this.gameEngine = gameEngine;
       this._name = name;
       this._actionText = actionText;
       this._description = description;
@@ -100,23 +104,23 @@ namespace RPGGame
 
   public class PlayerAbility : SpecialAbility
   {
-    private ConsoleKey _keyBind;
+    private int _keyBind;
     private PoolUsed _poolUsed;
     private double _poolCost;
 
-    public ConsoleKey KeyBind { get => this._keyBind; }
+    public int KeyBind { get => this._keyBind; }
     public PoolUsed PoolUsed { get => this._poolUsed; }
     public double Cost { get => this._poolCost; }
 
-    public PlayerAbility(string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect, PoolUsed poolUsed, double poolCost, ConsoleKey keyBind) :
-base(name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect)
+    public PlayerAbility(GameEngine gameEngine, string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect, PoolUsed poolUsed, double poolCost, int keyBind) :
+base(gameEngine, name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect)
     {
       this._poolUsed = poolUsed;
       this._poolCost = poolCost;
       this._keyBind = keyBind;
     }
-    public PlayerAbility(string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect, PoolUsed poolUsed, double poolCost, ConsoleKey keyBind, Dictionary<StatModifierType, int> statModifiers, int duration) :
-base(name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect, statModifiers, duration)
+    public PlayerAbility(GameEngine gameEngine, string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect, PoolUsed poolUsed, double poolCost, int keyBind, Dictionary<StatModifierType, int> statModifiers, int duration) :
+base(gameEngine, name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect, statModifiers, duration)
     {
       this._poolUsed = poolUsed;
       this._poolCost = poolCost;
@@ -127,43 +131,66 @@ base(name, actionText, description, statMultiplier, statUsed, element, attacktyp
     public void PrintAbilityInfo(PlayerCharacter character)
     {
       int cost = GetAbilityCost(character);
+      bool canBeUsed = AbilityCanBeUsed(cost, character);
+      ConsoleColor elementColor;
+      string info;
 
-      if (!AbilityCanBeUsed(cost, character))
-      {
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-      }
-
-      this.uiController.Write($"{this._name} - {cost}{this._poolUsed} ");
-      this.uiController.Write("- Element: ");
       switch (this._element)
       {
         case Element.None:
-          this.uiController.Write("None ");
+          elementColor = ConsoleColor.White;
           break;
         case Element.Fire:
-          this.uiController.WriteColorText(ConsoleColor.DarkRed, "Fire ", false);
+          elementColor = ConsoleColor.DarkRed;
           break;
         case Element.Water:
-          this.uiController.WriteColorText(ConsoleColor.DarkBlue, "Water ", false);
+          elementColor = ConsoleColor.DarkBlue;
           break;
         case Element.Wind:
-          this.uiController.WriteColorText(ConsoleColor.DarkGreen, "Wind ", false);
+          elementColor = ConsoleColor.DarkGreen;
           break;
         case Element.Earth:
-          this.uiController.WriteColorText(ConsoleColor.DarkYellow, "Earth ", false);
+          elementColor = ConsoleColor.DarkYellow;
           break;
         case Element.Dark:
-          this.uiController.WriteColorText(ConsoleColor.DarkGray, "Dark ", false);
+          elementColor = ConsoleColor.DarkGray;
           break;
         case Element.Light:
-          this.uiController.WriteColorText(ConsoleColor.Yellow, "Light ", false);
+          elementColor = ConsoleColor.Yellow;
+          break;
+        default:
+          elementColor = ConsoleColor.White;
           break;
       }
-      this.uiController.Write($"- Stat Used: {this._statUsed} ");
+      info = $"{this._name} - {cost}{this._poolUsed} - [{GetStatUsedShortString()}] - {this._description}";
 
+      if (canBeUsed)
+      {
+        this.gameEngine.UIController.WriteColorText(elementColor, info, false);
+      }
+      else
+      {
+        this.gameEngine.UIController.WriteColorText(ConsoleColor.DarkGray, info, false);
+      }
+    }
 
-      this.uiController.Write($"- {this._description}");
-      Console.ForegroundColor = ConsoleColor.White;
+    private string GetStatUsedShortString()
+    {
+      switch (this._statUsed)
+      {
+        case StatUsed.Agility:
+          return "Agi";
+        case StatUsed.Dexterity:
+          return "Dex";
+        case StatUsed.Magic:
+          return "Mag";
+        case StatUsed.Strength:
+          return "Str";
+        case StatUsed.Will:
+          return "Wil";
+        default:
+          return String.Empty;
+      }
     }
 
     public int GetAbilityCost(PlayerCharacter character)
@@ -184,20 +211,19 @@ base(name, actionText, description, statMultiplier, statUsed, element, attacktyp
       {
         return false;
       }
-
       return true;
     }
   }
 
   public class EnemyAbility : SpecialAbility
   {
-    public EnemyAbility(string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect) :
-  base(name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect)
+    public EnemyAbility(GameEngine gameEngine, string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect) :
+  base(gameEngine, name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect)
     {
     }
 
-    public EnemyAbility(string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect, Dictionary<StatModifierType, int> statModifiers, int duration) :
-      base(name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect, statModifiers, duration)
+    public EnemyAbility(GameEngine gameEngine, string name, string actionText, string description, double statMultiplier, StatUsed statUsed, Element element, AttackType attacktype, TargetType targetType, Effect effect, Dictionary<StatModifierType, int> statModifiers, int duration) :
+      base(gameEngine, name, actionText, description, statMultiplier, statUsed, element, attacktype, targetType, effect, statModifiers, duration)
     {
     }
   }

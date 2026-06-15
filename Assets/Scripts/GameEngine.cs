@@ -28,12 +28,6 @@ namespace RPGGame
     public int PauseDuration { get => _defaultPauseDuration; }
     private string currentKeyPressed;
     public string CurrentKeyPressed => currentKeyPressed;
-    private CancellationToken onDestroyToken;
-
-    private void Awake()
-    {
-      onDestroyToken = this.GetCancellationTokenOnDestroy();
-    }
 
     private void Start()
     {
@@ -67,6 +61,21 @@ namespace RPGGame
       else
       {
         this.currentKeyPressed = value.ToString();
+        switch (value)
+        {
+          case 'm':
+            this.resolver.Resolve<PartyInfo>().PartyMembers[0].CharacterStatus = CharacterStatus.Dead;
+            break;
+          case 'n':
+            this.resolver.Resolve<PartyInfo>().PartyMembers[1].CharacterStatus = CharacterStatus.Dead;
+            break;
+          case 'b':
+            this.resolver.Resolve<PartyInfo>().PartyMembers[2].CharacterStatus = CharacterStatus.Dead;
+            break;
+          case 'v':
+            this.resolver.Resolve<PartyInfo>().PartyMembers[3].CharacterStatus = CharacterStatus.Dead;
+            break;
+        }
       }
     }
 
@@ -145,24 +154,6 @@ namespace RPGGame
       {
         await UniTask.Delay(duration, false, PlayerLoopTiming.Update, this.destroyCancellationToken);
       }
-    }
-
-    public int ConsoleKeyToInt(ConsoleKey keyBind)
-    {
-      switch (keyBind)
-      {
-        case ConsoleKey.D1: return 1;
-        case ConsoleKey.D2: return 2;
-        case ConsoleKey.D3: return 3;
-        case ConsoleKey.D4: return 4;
-        case ConsoleKey.D5: return 5;
-        case ConsoleKey.D6: return 6;
-        case ConsoleKey.D7: return 7;
-        case ConsoleKey.D8: return 8;
-        case ConsoleKey.D9: return 9;
-      }
-
-      return -1;
     }
 
     public async UniTask WaitForPlayerKeyPress(WaitForPlayerActionDelegate action)

@@ -11,7 +11,7 @@ namespace RPGGame
     private int _price;
     private string _description;
     private int _effectValue;
-    private ConsoleKey _keyBind;
+    private int _keyBind;
     private TargetType _targetType;
     private Effect _specialEffect;
 
@@ -19,11 +19,11 @@ namespace RPGGame
     public int Price { get => this._price; }
     public string Description { get => this._description; }
     public int EffectValue { get => this._effectValue; }
-    public ConsoleKey KeyBind { get => this._keyBind; }
+    public int KeyBind { get => this._keyBind; }
     public TargetType TargetType { get => this._targetType; }
     public Effect SpecialEffect { get => this._specialEffect; }
 
-    public Consumable(GameEngine gameEngine, string name, int price, string description, int effectValue, TargetType targetType, ConsoleKey keyBind, Effect specialEffect)
+    public Consumable(GameEngine gameEngine, string name, int price, string description, int effectValue, TargetType targetType, int keyBind, Effect specialEffect)
     {
       this.gameEngine = gameEngine;
       this._name = name;
@@ -43,8 +43,6 @@ namespace RPGGame
       {
         this.uiController.Write($" - {this._price}G");
       }
-
-      this.uiController.Write("\n");
     }
   }
 }

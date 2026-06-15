@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using VContainer;
 
 namespace RPGGame
@@ -9,7 +10,7 @@ namespace RPGGame
     [Inject] private UIController uiController;
     [Inject] private PartyInfo partyInfo;
     [Inject] private GameDataBase GameData;
-    
+
     public void StartTown()
     {
       TownMenu();
@@ -17,6 +18,7 @@ namespace RPGGame
 
     private async void TownMenu()
     {
+      this.uiController.Clear();
       this.uiController.WriteLine("Where would you like to go?");
       this.uiController.WriteLine("[1] Inn");
       this.uiController.WriteLine("[2] Arms Dealer");
@@ -30,23 +32,18 @@ namespace RPGGame
         switch (this.gameEngine.CurrentKeyPressed)
         {
           case "1":
-            this.uiController.Clear();
             InnMenu();
             return true;
           case "2":
-            this.uiController.Clear();
             ArmsDealerMenu();
             return true;
           case "3":
-            this.uiController.Clear();
             ApothecaryMenu();
             return true;
           case "4":
-            this.uiController.Clear();
             DoctorMenu();
             return true;
           case "escape":
-            this.uiController.Clear();
             this.gameEngine.SwitchGameState(GameState.Menu);
             return true;
         }
@@ -57,29 +54,9 @@ namespace RPGGame
 
     private async void InnMenu()
     {
-
+      this.uiController.Clear();
       int costToRest = GetInnCost();
-      // Taken from https://www.asciiart.eu
-      this.uiController.WriteLine(@"
-    XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
- XXXXXXXXXXXXXXXXXX         XXXXXXXX
-XXXXXXXXXXXXXXXX              XXXXXXX
-XXXXXXXXXXXXX                   XXXXX
- XXX     _________ _________     XXX
-  XX    I  _xxxxx I xxxxx_  I    XX
- ( X----I         I         I----X )
-( +I    I      00 I 00      I    I+ )
- ( I    I    __0  I  0__    I    I )
-  (I    I______ /   \_______I    I)
-   I           ( ___ )           I
-   I    _  :::::::::::::::  _    i
-    \    \___ ::::::::: ___/    /
-     \_      \_________/      _/
-       \        \___,        /
-         \                 /
-          |\             /|
-          |  \_________/  |");
+      this.uiController.DrawShopModel(Shops.Inn);
 
       this.uiController.WriteLine("How can I help you today?");
       this.uiController.WriteLine();
@@ -149,27 +126,10 @@ XXXXXXXXXXXXX                   XXXXX
 
     private async void ArmsDealerMenu()
     {
-
-      // Taken from https://www.asciiart.eu
-      this.uiController.WriteLine(@"
-   .------\ /------.
-   |       -       |
-   |               |
-   |               |
-   |               |
-_______________________
-===========.===========
-  / ~~~~~     ~~~~~ \
- /|     |     |\
- W   ---  / \  ---   W
- \.      |o o|      ./
-  |                 |
-  \    #########    /
-   \  ## ----- ##  /
-    \##         ##/
-     \_____v_____/
-");
+      this.uiController.Clear();
+      this.uiController.DrawShopModel(Shops.ArmsDealer);
       this.uiController.WriteLine("You looking for something in particular?");
+      this.uiController.WriteLine($"Current Gold: {this.partyInfo.Gold}");
       this.uiController.WriteLine();
       this.uiController.WriteLine("Who would you like to buy new equipment for?");
       this.uiController.WriteLine();
@@ -216,12 +176,12 @@ _______________________
       Dictionary<int, Equipment> equipmentKeyBinds = new Dictionary<int, Equipment>();
 
       this.uiController.WriteLine($"{character.Name}'s current equipment:");
+      this.uiController.WriteLine();
       character.MainHand.PrintEquipmentInfo();
       this.uiController.WriteLine();
       character.OffHand.PrintEquipmentInfo();
       this.uiController.WriteLine();
       character.Armor.PrintEquipmentInfo();
-      this.uiController.WriteLine();
 
       this.uiController.WriteLine();
       this.uiController.WriteLine("Available equipment:");
@@ -231,12 +191,12 @@ _______________________
         if (character.PlayerProfession == item.CanBeUsedBy)
         {
           equipmentKeyBinds.Add(keyBind, item);
-          this.uiController.Write($"[{keyBind++}]");
+          this.uiController.WriteLine($"[{keyBind++}]");
           item.PrintEquipmentInfo(false);
-          this.uiController.WriteLine();
         }
       }
-      this.uiController.WriteLine("[Esc] Return to town");
+
+      this.uiController.WriteLine("[Esc] Choose someone else");
 
       string keyPressed;
       await this.gameEngine.WaitForPlayerKeyPress(() =>
@@ -246,7 +206,7 @@ _______________________
           if (keyPressed == "escape")
           {
             this.uiController.Clear();
-            TownMenu();
+            ArmsDealerMenu();
             return true;
           }
 
@@ -263,48 +223,22 @@ _______________________
     private async void ApothecaryMenu()
     {
       int keyBind = 1;
-
       Dictionary<int, Consumable> consumableKeyBinds = new Dictionary<int, Consumable>();
-      // Taken from https://www.asciiart.eu
-      // Art by THE LOCKER GNOME
-      this.uiController.WriteLine(@"
-                       ,---.
-                       /    |
-                      /     |
-                     /      |
-                    /       |
-               ___,'        |
-             <  -'          :
-              `-.__..--'``-,_\_
-                 |o/ ` :,.)_`>
-                 :/ `     ||/)
-                 (_.).__,-` |\
-                 /( `.``   `| :
-                 \'`-.)  `  ; ;
-                 | `       /-<
-                 |     `  /   `.
- ,-_-..____     /|  `    :__..-'\
-/,'-.__\\  ``-./ :`      ;       \
-`\ `\  `\\  \ :  (   `  /  ,   `. \
-  \` \   \\   |  | `   :  :     .\ \
-   \ `\_  ))  :  ;     |  |      ): :
-  (`-.-'\ ||  |\ \   ` ;  ;       | |
-   \-_   `;;._   ( `  /  /_       | |
-    `-.-.// ,'`-._\__/_,'         ; |
-       \:: :     /     `     ,   /  |
-        || |    (        ,' /   /   |
-        ||                ,'   / SSt|
-");
+
+      this.uiController.Clear();
+      this.uiController.DrawShopModel(Shops.Apothecary);
 
       this.uiController.WriteLine("Hello friend. What can I get you today?");
+      this.uiController.WriteLine($"Current Gold: {this.partyInfo.Gold}");
       this.uiController.WriteLine();
 
       foreach (Consumable item in GameData.Consumables.Values)
       {
         consumableKeyBinds.Add(keyBind, item);
-        this.uiController.Write($"[{keyBind++}] ");
+        this.uiController.WriteLine($"[{keyBind++}] ");
         item.PrintItemInfo(true);
       }
+
       this.uiController.WriteLine("[Esc] Return to town");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
@@ -357,6 +291,7 @@ _______________________
       }
 
       this.uiController.WriteLine($"That will be {finalPrice}G with your trade in.");
+      this.uiController.WriteLine($"Current Gold: {this.partyInfo.Gold}");
       this.uiController.WriteLine();
       this.uiController.WriteLine("[Spacebar] Purchase equipment");
       this.uiController.WriteLine("[Esc] On second thought...");
@@ -368,6 +303,7 @@ _______________________
            case "space":
              this.partyInfo.ModifyGold(-finalPrice);
              character.EquipItem(item);
+             this.uiController.WriteLine();
              this.uiController.WriteLine("Take good care of it.");
              this.gameEngine.PerformActionAfterPause(() =>
              {
@@ -387,6 +323,8 @@ _______________________
 
     private async void PurchaseItem(Consumable item)
     {
+      this.uiController.WriteLine();
+
       if (this.partyInfo.Gold < item.Price)
       {
         this.uiController.WriteLine("I'm afraid you're short on gold my friend...");
@@ -407,7 +345,6 @@ _______________________
         this.partyInfo.UsableItems[item] = 1;
       }
 
-      this.uiController.WriteLine();
       this.uiController.WriteLine("Thank you for your patronage!");
       await this.gameEngine.Pause();
       this.uiController.Clear();
@@ -416,99 +353,63 @@ _______________________
 
     private async void DoctorMenu()
     {
-      int keyBind = 1;
-
-      Dictionary<int, PlayerCharacter> deadCharacters = new Dictionary<int, PlayerCharacter>();
-      // Taken from https://www.asciiart.eu
-      this.uiController.WriteLine(@"
-                                     ____________
-                               _____/            \_
-                    __________/  _/          _____ \__
-        ______ ____/            /           /     \___\_
-      _/      \____           _/          _/             \_
-    _/             \____     /          _/    ___          \
-   /    _______         \_   |         /  ___/_____-        |
-  /   _/       \__        \_ |       _/__/      \_ \__      |
- /  _/            \______     \     /_/           \   \     |
- |_/                _____\__________/              \        |
- /               __/  __/ _/                          \_   /
- |           ___/    /  _/                              \_ |
- |        __/  /    |  /                  ________   \    \|
- |                  | /                   \XXXXXXXXxx_|    |
- |\                 | |                               |     \___
- | |          |     \ |______                         |         \_
- |  \             ___||XXXXX/                ---_     |           \
- |  |         | xxXXX//                     /___-///  |           |
-  \ \        /\     |/                 /   |///OX\\\  |           |
-  |  ||    _/  |        __---_         |   | \\XX///   \___      \|
-  \ //   _/    |     \\\xxxxx \        |   |\_\---       \ \_      \
-   |/  _/      |      | //OXX\\\        \                 \  \_     \
-  _/ _/        /\     | \\XXX///\                         |\   \    |
- /__/         /  \     \_-----                            | \   |   /
-|/ /              |                       \               /  |   \_/
-   |             /|                      _|              |  | __/
-  /             | |                  \ -                 / _/_/
-  |           _/ _/                         _____       |/
-  | _       _/  /\\ \               ________/ / |       /_
-  |/       /   /  \_ \_          __/_________/ /       /  \______
-   \      |   | \_  \- \_          \__________/      _/          \
-    \__   |              \___                      _/\_           |
-       \__|\_                \___                _/|   \         /
-          \__\_______________/   \___         __/  |\          \/
-                       \___  |       \_______/     | \___       |
-                        /  \_|                     |   \ \_____/
-                _______|____/                       \___\__
-");
+      this.uiController.Clear();
+      this.uiController.DrawShopModel(Shops.Doctor);
 
       this.uiController.WriteLine("Hello there!");
+      await this.gameEngine.Pause();
 
-      foreach (PlayerCharacter character in this.partyInfo.PartyMembers)
+      if (!this.partyInfo.PartyMembers.Any(character => character.CharacterStatus == CharacterStatus.Dead))
       {
-        if (character.CharacterStatus == CharacterStatus.Dead)
-        {
-          deadCharacters.Add(keyBind++, character);
-        }
-      }
-
-      if (deadCharacters.Count <= 0)
-      {
-        await this.gameEngine.Pause();
         this.uiController.WriteLine("I'm glad to see that none of you are in need of my services!");
         await this.gameEngine.Pause();
         this.uiController.WriteLine("Have a nice day!");
         await this.gameEngine.Pause();
         this.uiController.Clear();
         TownMenu();
+        return;
       }
-      else
-      {
-        foreach (var character in deadCharacters)
-        {
-          this.uiController.WriteLine($"[{character.Key}] {character.Value.Name} - {GetReviveCost(character.Value)}G");
-        }
 
-        this.uiController.WriteLine("[Esc] Return to town");
+      ShowDoctorMenuSelection();
+    }
+
+    private async void ShowDoctorMenuSelection()
+    {
+      Dictionary<int, PlayerCharacter> deadCharacters = new Dictionary<int, PlayerCharacter>();
+      int keyBind = 1;
+
+      this.uiController.ClearText();
+
+      foreach (PlayerCharacter character in this.partyInfo.PartyMembers)
+      {
+        if (character.CharacterStatus == CharacterStatus.Dead)
+        {
+          this.uiController.WriteLine($"[{keyBind}] {character.Name} - {GetReviveCost(character)}G");
+          deadCharacters.Add(keyBind++, character);
+        }
       }
+
+      this.uiController.WriteLine("[Esc] Return to town");
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
+      {
+        string keyPressed = this.gameEngine.CurrentKeyPressed;
+
+        if (keyPressed == "escape")
         {
-          string keyPressed = this.gameEngine.CurrentKeyPressed;
+          this.uiController.Clear();
+          TownMenu();
+          return true;
+        }
 
-          if (keyPressed == "escape")
-          {
-            this.uiController.Clear();
-            TownMenu();
-            return true;
-          }
+        if (int.TryParse(keyPressed, out int result) && deadCharacters.ContainsKey(result))
+        {
+          ReviveCharacter(deadCharacters[result], deadCharacters);
+          return true;
+        }
 
-          if (int.TryParse(keyPressed, out int result) && deadCharacters.ContainsKey(result))
-          {
-            ReviveCharacter(deadCharacters[result], deadCharacters);
-            return true;
-          }
-
-          return false;
-        });
+        return false;
+      });
     }
 
     private int GetReviveCost(PlayerCharacter character)
@@ -524,6 +425,12 @@ _______________________
       {
         this.uiController.WriteLine("It looks like you don't have enough...");
         await this.gameEngine.Pause(2400);
+        this.uiController.WriteLine("Still, I can't let you leave like that...");
+        await this.gameEngine.Pause(2400);
+        this.uiController.WriteLine("Don't worry about paying this time.");
+        await this.gameEngine.Pause(2400);
+        this.uiController.Clear();
+        this.uiController.WriteLine("You waited patiently while your injured allies wounds were treated...");
 
         foreach (var deadCharacter in deadCharacters.Values)
         {
@@ -531,13 +438,10 @@ _______________________
           deadCharacter.CurrentHealth = 1;
         }
 
-        this.uiController.WriteLine("Still, I can't let you leave like that. Pay me what you can and I'll take care of you.");
-
         await this.gameEngine.Pause(2400);
-
         this.uiController.Clear();
-        this.uiController.WriteLine("You waited patiently while your injured allies wounds were treated...");
-
+        this.uiController.DrawShopModel(Shops.Doctor);
+        this.uiController.WriteLine("Be safe out there.");
         await this.gameEngine.Pause(2400);
 
         this.uiController.Clear();
@@ -552,7 +456,16 @@ _______________________
 
         await this.gameEngine.Pause(2400);
 
-        DoctorMenu();
+        if (this.partyInfo.PartyMembers.Any(character => character.CharacterStatus == CharacterStatus.Dead))
+        {
+          ShowDoctorMenuSelection();
+        }
+        else
+        {
+          this.uiController.WriteLine("Take care!");
+          await this.gameEngine.Pause(2400);
+          TownMenu();
+        }
       }
     }
   }

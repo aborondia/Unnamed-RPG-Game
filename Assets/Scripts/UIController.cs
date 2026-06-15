@@ -9,9 +9,18 @@ public class UIController : MonoBehaviour
     [Inject] private IObjectResolver resolver;
     [SerializeField] private UIDocument uiDocument;
     [SerializeField] private VisualTreeAsset consoleLineTemplate;
+    [SerializeField] private Sprite gameOverSprite;
+    [SerializeField] private Sprite[] shopSprites;
+    [SerializeField] private Sprite[] enemySprites;
     private Queue<VisualElement> consoleLines = new Queue<VisualElement>();
     private VisualElement root;
+    private VisualElement mainContentContainer;
     private ScrollView contentScrollView;
+    private VisualElement enemyModelContainer;
+    private VisualElement enemyModelImage;
+    private Label enemyModelBuffLabel;
+    private VisualElement shopModelContainer;
+    private VisualElement shopModelImage;
     private VisualElement userInputFieldParent;
     private TextField userInputField;
     public TextField UserInputField => userInputField;
@@ -25,11 +34,19 @@ public class UIController : MonoBehaviour
     private void SetupUI()
     {
         this.root = this.uiDocument.rootVisualElement;
+        this.mainContentContainer = this.root.Q<VisualElement>("content-container");
         this.contentScrollView = this.root.Q<ScrollView>();
+        this.enemyModelContainer = this.root.Q<VisualElement>("enemy-model-container");
+        this.enemyModelImage = this.enemyModelContainer.Q<VisualElement>("image");
+        this.enemyModelBuffLabel = this.enemyModelContainer.Q<Label>();
+        this.enemyModelBuffLabel.RemoveFromClassList("label-white");
+        this.enemyModelBuffLabel.AddToClassList(GetFontColorSelector(ConsoleColor.Cyan));
+        this.shopModelContainer = this.root.Q<VisualElement>("shop-model-container");
+        this.shopModelImage = this.shopModelContainer.Q<VisualElement>("image");
         this.userInputFieldParent = this.contentScrollView.contentContainer.Q<TemplateContainer>("UserInputField");
         this.userInputField = this.userInputFieldParent.Q<TextField>();
         this.UserInputField.RegisterCallback<FocusOutEvent>(evt => this.UserInputField.Focus());
-        this.contentScrollView.contentContainer.Clear();
+        Clear();
     }
 
     public Label WriteLine(int value)
@@ -64,6 +81,11 @@ public class UIController : MonoBehaviour
         ColorText(label, consoleColor);
     }
 
+    public void WriteEnemyBuff(string value)
+    {
+        this.enemyModelBuffLabel.text += $"{value} ";
+    }
+
     public void ShowUserInputField()
     {
         this.userInputField.value = String.Empty;
@@ -77,7 +99,6 @@ public class UIController : MonoBehaviour
     {
         this.userInputField.focusable = false;
         this.userInputField.style.display = DisplayStyle.None;
-        // this.contentScrollView.contentContainer.Remove(this.userInputFieldParent);
     }
 
     private void ColorText(Label label, ConsoleColor consoleColor)
@@ -115,7 +136,7 @@ public class UIController : MonoBehaviour
         {
             return GetConsoleLabel(newLine);
         }
-        
+
         if (createNewElement)
         {
             labelContainer.Clear();
@@ -129,15 +150,48 @@ public class UIController : MonoBehaviour
         return newLabel;
     }
 
+    public void DrawEnemyModel(Difficulty difficulty)
+    {
+        this.enemyModelImage.style.backgroundImage = new StyleBackground(this.enemySprites[(int)difficulty]);
+        this.enemyModelContainer.style.display = DisplayStyle.Flex;
+        this.mainContentContainer.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
+    }
+
+    public void DrawShopModel(Shops shop)
+    {
+        this.shopModelImage.style.backgroundImage = new StyleBackground(this.shopSprites[(int)shop]);
+        this.shopModelContainer.style.display = DisplayStyle.Flex;
+    }
+
+    public void DrawGameOverModel()
+    {
+        this.shopModelImage.style.backgroundImage = new StyleBackground(this.gameOverSprite);
+        this.shopModelContainer.style.display = DisplayStyle.Flex;
+    }
+
     public void Clear()
+    {
+        ClearText();
+        ClearImage();
+    }
+
+    public void ClearText()
     {
         foreach (VisualElement consoleLine in this.contentScrollView.contentContainer.Children())
         {
             this.consoleLines.Enqueue(consoleLine);
         }
 
+        this.enemyModelBuffLabel.text = String.Empty;
         this.contentScrollView.contentContainer.Clear();
         this.lastLineModified = null;
+    }
+
+    public void ClearImage()
+    {
+        this.enemyModelContainer.style.display = DisplayStyle.None;
+        this.shopModelContainer.style.display = DisplayStyle.None;
+        this.mainContentContainer.style.flexDirection = StyleKeyword.None;
     }
 
     private string GetFontColorSelector(ConsoleColor consoleColor)
@@ -185,9 +239,4 @@ public class UIController : MonoBehaviour
     {
         this.contentScrollView.verticalScroller.value = this.contentScrollView.verticalScroller.highValue;
     }
-    // TODO Implement for mobile
-    // public void SimulateKeyPressed()
-    // {
-    //     InputSystem.QueueStateEvent(Keyboard.current, new KeyboardState(Key.W));
-    // }
 }

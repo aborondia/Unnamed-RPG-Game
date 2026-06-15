@@ -5,11 +5,18 @@
     <Style src="project://database/Assets/UI/USS/Colors.uss?fileID=7433441132597879392&amp;guid=58d8313fd2ce23d41adbb276fa1dbc8b&amp;type=3#Colors"/>
     <ui:VisualElement name="main" style="width: 100%; height: 100%;">
         <ui:VisualElement name="console" class="console" style="flex-grow: 1; position: absolute; width: 100%; height: 100%;"/>
-        <ui:VisualElement name="content-container" class="content-container" style="flex-direction: column;">
-            <ui:ScrollView vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" enabled="true" picking-mode="Ignore">
+        <ui:VisualElement name="content-container" class="content-container" style="flex-direction: row;">
+            <ui:VisualElement name="shop-model-container" class="shop-model-container" style="display: none;">
+                <ui:VisualElement name="image" class="shop-model-container-image" style="background-image: url(&quot;project://database/Assets/Images/alchemist-by-OpenClipart-Vectors.png?fileID=2800000&amp;guid=a7cbe97b83cc927409f0965033782d19&amp;type=3#alchemist-by-OpenClipart-Vectors&quot;);"/>
+            </ui:VisualElement>
+            <ui:ScrollView vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" enabled="true" picking-mode="Ignore" name="ScrollView" style="min-width: 70%;">
                 <ui:Instance template="ConsoleLineEntry" name="ConsoleLineEntry"/>
                 <ui:Instance template="UserInputField" name="UserInputField"/>
             </ui:ScrollView>
+            <ui:VisualElement name="enemy-model-container" class="enemy-model-container">
+                <ui:VisualElement name="image" class="enemy-model-container-image" style="background-image: url(&quot;project://database/Assets/Images/demon-by-evilfavoriteart.png?fileID=2800000&amp;guid=dbd6217c70524e744890f7ca8b34bcea&amp;type=3#demon-by-evilfavoriteart&quot;);"/>
+                <ui:Instance template="ConsoleLineEntry" name="ConsoleLineEntry"/>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

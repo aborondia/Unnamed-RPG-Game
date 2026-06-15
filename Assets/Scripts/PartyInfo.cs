@@ -6,7 +6,7 @@ using VContainer;
 
 namespace RPGGame
 {
-  public class PartyInfo 
+  public class PartyInfo
   {
     [Inject] private IObjectResolver resolver;
     [Inject] private GameEngine gameEngine;
@@ -62,22 +62,26 @@ namespace RPGGame
 
       foreach (PlayerCharacter character in _partyMembers)
       {
+        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{keyIndex++}]", true);
+
         if (character.CharacterStatus == CharacterStatus.Dead)
         {
-          Console.ForegroundColor = ConsoleColor.Gray;
+          this.uiController.WriteColorText(ConsoleColor.Gray, $"{character.Name} - HP: {character.CurrentHealth}/{character.MaxHealth} MP: {character.CurrentMana}/{character.MaxMana}", false);
         }
+        else
+        {
+          this.uiController.Write($"{character.Name} - HP: {character.CurrentHealth}/{character.MaxHealth} MP: {character.CurrentMana}/{character.MaxMana}");
 
-        this.uiController.WriteColorText(ConsoleColor.Magenta, $"[{keyIndex++}]", true);
-        this.uiController.Write($"{character.Name} - HP: {character.CurrentHealth}/{character.MaxHealth} MP: {character.CurrentMana}/{character.MaxMana}");
-        Console.ForegroundColor = ConsoleColor.White;
+        }
       }
-      this.uiController.WriteLine("[Esc]");
-      this.uiController.Write("Return to menu");
+
+      this.uiController.WriteLine("[Esc] Return to menu");
 
       if (_usableItems.Count > 0)
       {
         this.uiController.WriteLine();
         this.uiController.WriteLine("Inventory:");
+
         foreach (var item in _usableItems)
         {
           this.uiController.WriteLine($"{item.Key.Name}x{item.Value}");
@@ -116,8 +120,6 @@ namespace RPGGame
       character.PrintStats();
       this.uiController.WriteLine();
       this.uiController.WriteLine("Press escape to return to party menu.");
-
-      ConsoleKey keyPressed = Console.ReadKey(true).Key;
 
       await this.gameEngine.WaitForPlayerKeyPress(() =>
         {
@@ -208,8 +210,9 @@ namespace RPGGame
         case "2":
           foreach (PlayerCharacter character in _partyMembers)
           {
-            await LevelUpToMax(character);
+            await character.LevelUpToMax();
           }
+
           this.uiController.WriteLine("You're so strong.");
           this.gameEngine.PerformActionAfterPause(() =>
           {
@@ -257,15 +260,6 @@ namespace RPGGame
           this.uiController.Clear();
           this.resolver.Resolve<Menu>().StartMainMenu();
           break;
-      }
-    }
-
-    private async UniTask LevelUpToMax(PlayerCharacter character)
-    {
-      if (character.Level < 8)
-      {
-        await character.LevelUp(true);
-        await LevelUpToMax(character);
       }
     }
 

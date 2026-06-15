@@ -1,0 +1,390 @@
+fileFormatVersion: 2
+guid: d22b22bad45e93e419468d91f9574a99
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6243171667180997884
+    second: dragon-by-Simonrtr120_0
+  - first:
+      213: -2254226010292485428
+    second: dragon-by-Simonrtr120_1
+  - first:
+      213: -5782826337791580059
+    second: dragon-by-Simonrtr120_2
+  - first:
+      213: -3338938099829961173
+    second: dragon-by-Simonrtr120_3
+  - first:
+      213: 5545528981588695204
+    second: dragon-by-Simonrtr120_4
+  - first:
+      213: 3919558947630202353
+    second: dragon-by-Simonrtr120_5
+  - first:
+      213: 9175755059767552120
+    second: dragon-by-Simonrtr120_6
+  - first:
+      213: 5848577388491387448
+    second: dragon-by-Simonrtr120_7
+  - first:
+      213: -2148715007863266237
+    second: dragon-by-Simonrtr120_8
+  - first:
+      213: -7343141810724962580
+    second: dragon-by-Simonrtr120_9
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_0
+      rect:
+        serializedVersion: 2
+        x: 635
+        y: 5070
+        width: 722
+        height: 1868
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfc4b16bd8334a650800000000000000
+      internalID: 6243171667180997884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_1
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 0
+        width: 4634
+        height: 6200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc20215136167b0e0800000000000000
+      internalID: -2254226010292485428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_2
+      rect:
+        serializedVersion: 2
+        x: 936
+        y: 5183
+        width: 1419
+        height: 2283
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 568e822a5164fbfa0800000000000000
+      internalID: -5782826337791580059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_3
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 4157
+        width: 4126
+        height: 3002
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2e0e981d75b9a1d0800000000000000
+      internalID: -3338938099829961173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_4
+      rect:
+        serializedVersion: 2
+        x: 4754
+        y: 5162
+        width: 1864
+        height: 1657
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a85a3f2a3da5fc40800000000000000
+      internalID: 5545528981588695204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_5
+      rect:
+        serializedVersion: 2
+        x: 5407
+        y: 3844
+        width: 672
+        height: 1865
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fdb3bd9812156630800000000000000
+      internalID: 3919558947630202353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3620
+        width: 2040
+        height: 835
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87820739c94d65f70800000000000000
+      internalID: 9175755059767552120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_7
+      rect:
+        serializedVersion: 2
+        x: 6059
+        y: 4354
+        width: 64
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8323962d5225a2150800000000000000
+      internalID: 5848577388491387448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_8
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1357
+        width: 955
+        height: 1652
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34462c0b51b3e22e0800000000000000
+      internalID: -2148715007863266237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dragon-by-Simonrtr120_9
+      rect:
+        serializedVersion: 2
+        x: 4133
+        y: 611
+        width: 1677
+        height: 1752
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cee7b64cd6be71a90800000000000000
+      internalID: -7343141810724962580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      dragon-by-Simonrtr120_0: 6243171667180997884
+      dragon-by-Simonrtr120_1: -2254226010292485428
+      dragon-by-Simonrtr120_2: -5782826337791580059
+      dragon-by-Simonrtr120_3: -3338938099829961173
+      dragon-by-Simonrtr120_4: 5545528981588695204
+      dragon-by-Simonrtr120_5: 3919558947630202353
+      dragon-by-Simonrtr120_6: 9175755059767552120
+      dragon-by-Simonrtr120_7: 5848577388491387448
+      dragon-by-Simonrtr120_8: -2148715007863266237
+      dragon-by-Simonrtr120_9: -7343141810724962580
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 
@@ -12,13 +13,13 @@ namespace RPGGame
     DamageHp,
     Buff,
   }
-  public class Effects 
+  public class Effects
   {
     [Inject] private GameEngine gameEngine;
     [Inject] private UIController uiController;
     [Inject] private PartyInfo partyInfo;
 
-    public void HealHP(List<Character> targets, int healAmount)
+    public async UniTask HealHP(List<Character> targets, int healAmount)
     {
       for (int i = 0; i < targets.Count; i++)
       {
@@ -40,30 +41,31 @@ namespace RPGGame
         }
 
         this.uiController.WriteColorText(ConsoleColor.Green, $"{targets[i].Name} recovered {amountText}.");
-        this.gameEngine.Pause();
+        await this.gameEngine.Pause();
       }
     }
 
-    public void HealMP(PlayerCharacter target, int healAmount)
+    public async UniTask HealMP(PlayerCharacter target, int healAmount)
     {
       if (target.MaxMana <= target.CurrentMana + healAmount)
       {
         target.CurrentMana = target.MaxMana;
         this.uiController.WriteLine($"{target.Name} recovered full MP.");
-        this.gameEngine.Pause();
+        await this.gameEngine.Pause();
       }
       else
       {
         target.CurrentMana += healAmount;
         this.uiController.WriteLine($"{target.Name} regained {healAmount} MP.");
-        this.gameEngine.Pause();
+        await this.gameEngine.Pause();
       }
     }
 
-    public void DamageHP(List<Character> targets, List<int> damage)
+    public async UniTask DamageHP(List<Character> targets, List<int> damage)
     {
       for (int i = 0; i < targets.Count; i++)
       {
+
         if (targets[i].CharacterStatus == CharacterStatus.Dead)
         {
           continue;
@@ -72,13 +74,13 @@ namespace RPGGame
         if (damage[i] <= 0)
         {
           this.uiController.WriteLine($"{targets[i].Name} dodged the attack!");
-          this.gameEngine.Pause();
+          await this.gameEngine.Pause();
           continue;
         }
 
         targets[i].CurrentHealth -= damage[i];
         this.uiController.WriteColorText(ConsoleColor.Red, $"{targets[i].Name} received {damage[i]} damage!");
-        this.gameEngine.Pause();
+        await this.gameEngine.Pause();
 
         if (targets[i].CurrentHealth <= 0)
         {
@@ -92,7 +94,7 @@ namespace RPGGame
           }
 
           this.uiController.WriteColorText(ConsoleColor.DarkRed, $"{targets[i].Name} has been slain!");
-          this.gameEngine.Pause();
+          await this.gameEngine.Pause();
         }
       }
     }

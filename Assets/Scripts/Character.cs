@@ -154,7 +154,7 @@ namespace RPGGame
     private int _level = 1;
     private int _experience = 0;
     private PlayerProfession _playerProfession;
-    private Dictionary<ConsoleKey, PlayerAbility> _specialAbilities;
+    private Dictionary<int, PlayerAbility> _specialAbilities;
     private Equipment _mainHand;
     private Equipment _offHand;
     private Equipment _armor;
@@ -170,7 +170,7 @@ namespace RPGGame
       [8] = 2000
     };
 
-    public Dictionary<ConsoleKey, PlayerAbility> SpecialAbilities { get => this._specialAbilities; }
+    public Dictionary<int, PlayerAbility> SpecialAbilities { get => this._specialAbilities; }
     public PlayerProfession PlayerProfession { get => this._playerProfession; }
 
     public int Level { get => this._level; }
@@ -189,7 +189,7 @@ namespace RPGGame
       this._maxMana = playerProfession.BaseMana;
       this._currentMana = this._maxMana;
       this._playerProfession = playerProfession;
-      this._specialAbilities = new Dictionary<ConsoleKey, PlayerAbility>();
+      this._specialAbilities = new Dictionary<int, PlayerAbility>();
 
       this._specialAbilities.Add(playerProfession.GetNewAbility(1).KeyBind, playerProfession.GetNewAbility(1));
       EquipItem(gameData.Equipment[playerProfession.StartingMainHand]);
@@ -265,7 +265,7 @@ namespace RPGGame
       }
     }
 
-    public async void UpdateExperience(int amount)
+    public async UniTask UpdateExperience(int amount)
     {
       this._experience += amount;
 
@@ -278,7 +278,6 @@ namespace RPGGame
     public async UniTask LevelUp(bool fastForward = false)
     {
       int pauseDuration = fastForward ? 1 : this.gameEngine.PauseDuration;
-      this.uiController.WriteLine(pauseDuration);
       this.uiController.WriteLine($"{this._name} has leveled up!");
       await this.gameEngine.Pause(pauseDuration);
 
@@ -325,57 +324,142 @@ namespace RPGGame
       }
     }
 
+    public async UniTask LevelUpToMax()
+    {
+      int pauseDuration = this.gameEngine.PauseDuration;
+      int totalLevels = 0;
+      List<PlayerAbility> newAbilities = new List<PlayerAbility>();
+
+
+      for (int i = this._level; i < 8; i++)
+      {
+        PlayerAbility newAbility;
+        this._level++;
+        totalLevels++;
+        newAbility = this._playerProfession.GetNewAbility(this._level);
+        newAbilities.Add(newAbility);
+        this._specialAbilities.Add(newAbility.KeyBind, newAbility);
+      }
+
+      if (totalLevels <= 0)
+      {
+        return;
+      }
+
+      if (totalLevels == 1)
+      {
+        this.uiController.WriteLine($"{this._name} has leveled up!");
+      }
+      else
+      {
+        this.uiController.WriteLine($"{this._name} has gained {totalLevels} levels!");
+      }
+
+      await this.gameEngine.Pause(pauseDuration);
+
+      foreach (PlayerAbility newAbility in newAbilities)
+      {
+        this.uiController.WriteLine($"They have learned {newAbility.Name}");
+      }
+
+      await this.gameEngine.Pause(pauseDuration);
+
+      this.uiController.WriteLine("They gained the following stats:");
+
+      foreach (var statUp in this._playerProfession.LevelUpStats)
+      {
+        this.uiController.WriteLine($"{statUp.Key}+{totalLevels * statUp.Value}");
+        switch (statUp.Key)
+        {
+          case StatModifierType.Attack:
+            this._strength += totalLevels * statUp.Value;
+            continue;
+          case StatModifierType.Defense:
+            this._vitality += totalLevels * statUp.Value;
+            continue;
+          case StatModifierType.Magic:
+            this._magic += totalLevels * statUp.Value;
+            continue;
+          case StatModifierType.MagiDefense:
+            this._willPower += totalLevels * statUp.Value;
+            continue;
+          case StatModifierType.Agility:
+            this._agility += totalLevels * statUp.Value;
+            continue;
+          case StatModifierType.Dexterity:
+            this._dexterity += totalLevels * statUp.Value;
+            continue;
+          case StatModifierType.Health:
+            this._maxHealth += totalLevels * statUp.Value;
+            continue;
+          case StatModifierType.Mana:
+            this._maxMana += totalLevels * statUp.Value;
+            continue;
+        }
+      }
+      await this.gameEngine.Pause(pauseDuration);
+    }
+
     public void PrintStats()
     {
-      string nextLevelText = this._level < 8 ? this._levelChart[this._level + 1].ToString() : $"{this._name} has reached max level.";
+      int totalToNextLevel = 0;
+      int toNextLevel;
+      string toNextLevelText;
+
+      if (this._level >= 8)
+      {
+        toNextLevelText = "-/Max";
+        totalToNextLevel = this._experience;
+      }
+      else
+      {
+        for (int i = 1; i <= this._level; i++)
+        {
+          totalToNextLevel += this._levelChart[i];
+        }
+
+        totalToNextLevel = totalToNextLevel - this._experience;
+        toNextLevel = this._levelChart[this._level + 1];
+        toNextLevelText = $"{totalToNextLevel} /{toNextLevel}";
+      }
 
       this.uiController.WriteLine(this._name);
-      this.uiController.WriteLine($"Level: {this._level}");
-      this.uiController.Write($"Current Exp: {this._experience} - Next Level: ");
-      this.uiController.WriteLine(nextLevelText);
+      this.uiController.WriteLine($"Level: {this._level} - {this.Name} - Exp: {toNextLevelText}");
 
+      this.uiController.WriteLine();
       this._mainHand.PrintEquipmentInfo();
       this.uiController.WriteLine();
-
       this._offHand.PrintEquipmentInfo();
       this.uiController.WriteLine();
-
       this._armor.PrintEquipmentInfo();
-      this.uiController.WriteLine();
 
-      this.uiController.WriteLine($"Strength: {this._strength}");
-      this.uiController.WriteLine($"Magic: {this._magic}");
-      this.uiController.WriteLine($"Vitality: {this._vitality}");
-      this.uiController.WriteLine($"Will Power: {this._willPower}");
-      this.uiController.WriteLine($"Agility: {this._agility}");
-      this.uiController.WriteLine($"Dexterity: {this._dexterity}");
+      this.uiController.WriteLine($"Strength: {this._strength}  Magic: {this._magic}");
+      this.uiController.WriteLine($"Vitality: {this._vitality}  Will Power: {this._willPower}");
+      this.uiController.WriteLine($"Agility: {this._agility}  Dexterity: {this._dexterity}");
     }
 
     public void PrintBattleInfo()
     {
       HashSet<string> buffDisplays = new HashSet<string>();
 
-      this.uiController.Write($"{this._name} HP: {this._currentHealth}/{this._maxHealth} MP: {this._currentMana}/{this._maxMana}");
+      this.uiController.WriteLine($"{this._name} HP: {this._currentHealth}/{this._maxHealth} MP: {this._currentMana}/{this._maxMana}");
 
       foreach (var buff in this._temporaryBuffs)
       {
         buffDisplays.Add(buff.BuffDisplay);
       }
 
-      Console.ForegroundColor = ConsoleColor.Cyan;
-
       foreach (string buffDisplay in buffDisplays)
       {
-        this.uiController.Write($" {buffDisplay}");
+        this.uiController.WriteColorText(ConsoleColor.Cyan, $" {buffDisplay}", false);
       }
-
-      this.uiController.WriteLine();
-      Console.ForegroundColor = ConsoleColor.White;
     }
   }
 
   public class EnemyCharacter : Character
   {
+    private Difficulty difficulty;
+    public Difficulty Difficulty => difficulty;
     private int _modelIndex;
     private int _experienceReward;
     private int _goldReward;
@@ -388,9 +472,10 @@ namespace RPGGame
     public Dictionary<EnemyAbility, int> EnemyBehaviour { get => this._enemyBehaviour; }
 
     public EnemyCharacter
-      (GameEngine gameEngine, string name, int maxHealth, int strength, int vitality, int magic, int will, int agility, int dexterity, int experienceReward, int goldReward, HashSet<Element> resistances, HashSet<Element> weaknesses, Dictionary<EnemyAbility, int> enemyBehaviour, int model) : base
+      (Difficulty difficulty, GameEngine gameEngine, string name, int maxHealth, int strength, int vitality, int magic, int will, int agility, int dexterity, int experienceReward, int goldReward, HashSet<Element> resistances, HashSet<Element> weaknesses, Dictionary<EnemyAbility, int> enemyBehaviour, int model) : base
       (gameEngine, name, maxHealth, strength, vitality, magic, will, agility, dexterity, resistances, weaknesses)
     {
+      this.difficulty = difficulty;
       this._experienceReward = experienceReward;
       this._goldReward = goldReward;
       this._enemyBehaviour = enemyBehaviour;
@@ -399,7 +484,7 @@ namespace RPGGame
 
     public void PrintModel()
     {
-      this.uiController.WriteLine(gameData.EnemyModels[this.ModelIndex]);
+      this.uiController.DrawEnemyModel(this.difficulty);
     }
 
     public void PrintBuffs()
@@ -411,15 +496,12 @@ namespace RPGGame
         buffDisplays.Add(buff.BuffDisplay);
       }
 
-      Console.ForegroundColor = ConsoleColor.Cyan;
-
       foreach (string buffDisplay in buffDisplays)
       {
-        this.uiController.Write($" {buffDisplay}");
+        this.uiController.WriteEnemyBuff(buffDisplay);
       }
 
       this.uiController.WriteLine();
-      Console.ForegroundColor = ConsoleColor.White;
     }
   }
 }

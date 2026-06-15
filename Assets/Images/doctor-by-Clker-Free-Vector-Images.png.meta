@@ -1,0 +1,442 @@
+fileFormatVersion: 2
+guid: 8687cfc0459690048b2b68c77df87fd4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5414461030850477981
+    second: doctor-by-Clker-Free-Vector-Images_0
+  - first:
+      213: 6236973709959822337
+    second: doctor-by-Clker-Free-Vector-Images_1
+  - first:
+      213: 6171138062427017795
+    second: doctor-by-Clker-Free-Vector-Images_2
+  - first:
+      213: 8644167065966137297
+    second: doctor-by-Clker-Free-Vector-Images_3
+  - first:
+      213: 1126021652523097338
+    second: doctor-by-Clker-Free-Vector-Images_4
+  - first:
+      213: -1738158189150378549
+    second: doctor-by-Clker-Free-Vector-Images_5
+  - first:
+      213: -422355563832541623
+    second: doctor-by-Clker-Free-Vector-Images_6
+  - first:
+      213: 390840771365990024
+    second: doctor-by-Clker-Free-Vector-Images_7
+  - first:
+      213: 4414949461272284196
+    second: doctor-by-Clker-Free-Vector-Images_8
+  - first:
+      213: 9150460214424108343
+    second: doctor-by-Clker-Free-Vector-Images_9
+  - first:
+      213: -1267644516924050585
+    second: doctor-by-Clker-Free-Vector-Images_10
+  - first:
+      213: -1139548894525167479
+    second: doctor-by-Clker-Free-Vector-Images_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_0
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 66
+        width: 94
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9fb90ade97042b40800000000000000
+      internalID: 5414461030850477981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_1
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 15
+        width: 73
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10cfa975b8e2e8650800000000000000
+      internalID: 6236973709959822337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_2
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 129
+        width: 63
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 342dad62f5944a550800000000000000
+      internalID: 6171138062427017795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_3
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 23
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dfca02d52046f770800000000000000
+      internalID: 8644167065966137297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_4
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 10
+        width: 24
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afc99002abe60af00800000000000000
+      internalID: 1126021652523097338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_5
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 29
+        width: 9
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc5614c0652d0e7e0800000000000000
+      internalID: -1738158189150378549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_6
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 28
+        width: 48
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94ef9d83add732af0800000000000000
+      internalID: -422355563832541623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 11
+        width: 42
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88e620d5c9b8c6500800000000000000
+      internalID: 390840771365990024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_8
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 6
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42ccf64c42d054d30800000000000000
+      internalID: 4414949461272284196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_9
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 0
+        width: 42
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73df7147517fcfe70800000000000000
+      internalID: 9150460214424108343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_10
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 6
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7633543370c686ee0800000000000000
+      internalID: -1267644516924050585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: doctor-by-Clker-Free-Vector-Images_11
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98863a961528f20f0800000000000000
+      internalID: -1139548894525167479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      doctor-by-Clker-Free-Vector-Images_0: 5414461030850477981
+      doctor-by-Clker-Free-Vector-Images_1: 6236973709959822337
+      doctor-by-Clker-Free-Vector-Images_10: -1267644516924050585
+      doctor-by-Clker-Free-Vector-Images_11: -1139548894525167479
+      doctor-by-Clker-Free-Vector-Images_2: 6171138062427017795
+      doctor-by-Clker-Free-Vector-Images_3: 8644167065966137297
+      doctor-by-Clker-Free-Vector-Images_4: 1126021652523097338
+      doctor-by-Clker-Free-Vector-Images_5: -1738158189150378549
+      doctor-by-Clker-Free-Vector-Images_6: -422355563832541623
+      doctor-by-Clker-Free-Vector-Images_7: 390840771365990024
+      doctor-by-Clker-Free-Vector-Images_8: 4414949461272284196
+      doctor-by-Clker-Free-Vector-Images_9: 9150460214424108343
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

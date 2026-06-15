@@ -50,7 +50,7 @@ namespace RPGGame
 
       if (tradeInCost)
       {
-        this.uiController.Write($"Trade in price: {this.TradeInPrice}G");
+        this.uiController.Write($"Resell price: {this.TradeInPrice}G");
       }
       else
       {

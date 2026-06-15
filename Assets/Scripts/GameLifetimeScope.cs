@@ -27,13 +27,19 @@ namespace RPGGame
 
             builder.Register<Map>(Lifetime.Transient);
             builder.Register<Menu>(Lifetime.Transient);
-            builder.Register<Effect>(Lifetime.Transient);
+            builder.Register<Effects>(Lifetime.Transient);
             builder.Register<Town>(Lifetime.Transient);
+            
             builder.Register<Warrior>(Lifetime.Transient);
             builder.Register<Rouge>(Lifetime.Transient);
             builder.Register<Wizard>(Lifetime.Transient);
             builder.Register<Cleric>(Lifetime.Transient);
+
             builder.Register<Equipment>(Lifetime.Transient);
+            builder.Register<SpecialAbility>(Lifetime.Transient);
+            builder.Register<EnemyAbility>(Lifetime.Transient);
+            builder.Register<EnemyAbility>(Lifetime.Transient);
+            builder.Register<Consumable>(Lifetime.Transient);
         }
     }
 }

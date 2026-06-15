@@ -1,10 +1,10 @@
 Label {
     -unity-font-definition: url("project://database/Assets/Fonts/CascadiaCode-Regular.ttf?fileID=12800000&guid=2b2769ecb884d044ab8f7bec05b30488&type=3#CascadiaCode-Regular");
-    font-size: 10px;
 }
 
 TextField {
-    font-size: 10px;
+    -unity-font-definition: url("project://database/Assets/Fonts/CascadiaCode-Regular.ttf?fileID=12800000&guid=2b2769ecb884d044ab8f7bec05b30488&type=3#CascadiaCode-Regular");
+    font-size: 12px;
 }
 
 .console {
@@ -32,5 +32,34 @@ TextField {
     padding-bottom: 20px;
     padding-left: 20px;
     white-space: nowrap;
-    flex-direction: row;
 }
+
+.enemy-model-container {
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    min-width: 30%;
+    max-width: 30%;
+}
+
+.enemy-model-container-image {
+    flex-grow: 1;
+    -unity-background-scale-mode: scale-to-fit;
+    background-position-y: center;
+    background-position-x: center;
+}
+
+
+.shop-model-container {
+    max-height: 40%;
+    min-height: 40%;
+}
+
+.shop-model-container-image {
+    flex-grow: 1;
+    -unity-background-scale-mode: scale-to-fit;
+    background-position-y: center;
+    background-position-x: center;
+}
+

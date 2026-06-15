@@ -150,6 +150,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIController
   uiDocument: {fileID: 1969950818}
   consoleLineTemplate: {fileID: 9197481963319205126, guid: 4b7002346e29447419eb7dd06d487f81, type: 3}
+  gameOverSprite: {fileID: 21300000, guid: 84556d96d9530ea498f376e4d2a69675, type: 3}
+  shopSprites:
+  - {fileID: 21300000, guid: 092860829e5577243aad1fadc15a3b1b, type: 3}
+  - {fileID: 21300000, guid: ba3b58e2566096c479575fc0e398a151, type: 3}
+  - {fileID: 21300000, guid: a7cbe97b83cc927409f0965033782d19, type: 3}
+  - {fileID: 21300000, guid: 8687cfc0459690048b2b68c77df87fd4, type: 3}
+  enemySprites:
+  - {fileID: 21300000, guid: 62767786a447d594fa458368f15ec992, type: 3}
+  - {fileID: 21300000, guid: 32eb262351a221248a8ba932b1295017, type: 3}
+  - {fileID: 21300000, guid: d22b22bad45e93e419468d91f9574a99, type: 3}
+  - {fileID: 21300000, guid: dbd6217c70524e744890f7ca8b34bcea, type: 3}
 --- !u!4 &166535014
 Transform:
   m_ObjectHideFlags: 0
