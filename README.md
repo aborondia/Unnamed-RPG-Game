@@ -4,7 +4,7 @@ This is a project I made as part of the Software Developer program at the Manito
 
 It is an RPG game built using C#, for the C# console. The requirements for the project were very basic, but I have added many extra features.
 
-I recently ported it over to Unity so I could host it as a WebGL build because why not? There's still a lot of old code form my student days so don't judge too harshly. I've improved since then.
+I recently ported it over to Unity so I could host it as a WebGL build because why not? There's still a lot of old code from my student days so don't judge too harshly. I've improved since then.
 
 You can play the live version [here](https://andrewbrpggame.netlify.app/). It does work on mobile via touch but that's not recommended. Maybe I'll also properly balance it one day, we'll see.
 
