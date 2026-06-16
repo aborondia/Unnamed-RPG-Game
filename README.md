@@ -4,6 +4,7 @@ This is a project I made as part of the Software Developer program at the Manito
 
 It is an RPG game built using C#, for the C# console. The requirements for the project were very basic, but I have added many extra features.
 
+![A fight with the demon lord](https://i.postimg.cc/xTQDFPWd/demon-lord-fight.png)
 ## The basic requirements for the project were as follows:
 * Show statistics (games played, won, etc.)
 * Show player inventory, including equipped items
