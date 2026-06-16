@@ -1,4 +1,4 @@
-# Unnamed RPG Game - [Andrew Borondia](https://cranky-beaver-6bfa9c.netlify.app/projects)
+# Unnamed RPG Game - [Andrew Borondia](https://aborondia.netlify.app/projects#ROYen54KeQ)
 
 This is a project I made as part of the Software Developer program at the Manitoba Institute of Trades and Technology.
 
@@ -6,7 +6,7 @@ It is an RPG game built using C#, for the C# console. The requirements for the p
 
 I recently ported it over to Unity so I could host it as a WebGL build because why not? There's still a lot of old code form my student days so don't judge too harshly. I've improved since then.
 
-You can play the live version [here](https://andrewbrpggame.netlify.app/). It does work on mobile via touch. Just use the pre-made party because I didn't feel like investing more time to enable proper text input on mobile needed to name new party members. Maybe I'll also properly balance it one day, we'll see.
+You can play the live version [here](https://andrewbrpggame.netlify.app/). It does work on mobile via touch but that's not recommended. Maybe I'll also properly balance it one day, we'll see.
 
 ## The basic requirements for the project were as follows:
 * Show statistics (games played, won, etc.)
