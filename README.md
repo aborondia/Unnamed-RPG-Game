@@ -1,4 +1,4 @@
-# Unnamed RPG Game - [Andrew Borondia](https://cranky-beaver-6bfa9c.netlify.app/projects)
+# Unnamed RPG Game - [Andrew Borondia](https://aborondia.netlify.app/projects/#ROYen54KeQ)
 
 This is a project I made as part of the Software Developer program at the Manitoba Institute of Trades and Technology.
 
