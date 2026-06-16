@@ -24,6 +24,7 @@ public class UIController : MonoBehaviour
     private VisualElement userInputFieldParent;
     private TextField userInputField;
     public TextField UserInputField => userInputField;
+    private CustomButton userInputFieldSubmitButton;
     private VisualElement lastLineModified;
 
     private void Awake()
@@ -43,10 +44,27 @@ public class UIController : MonoBehaviour
         this.enemyModelBuffLabel.AddToClassList(GetFontColorSelector(ConsoleColor.Cyan));
         this.shopModelContainer = this.root.Q<VisualElement>("shop-model-container");
         this.shopModelImage = this.shopModelContainer.Q<VisualElement>("image");
+
+        SetupUserInput();
+        Clear();
+    }
+
+    private void SetupUserInput()
+    {
         this.userInputFieldParent = this.contentScrollView.contentContainer.Q<TemplateContainer>("UserInputField");
         this.userInputField = this.userInputFieldParent.Q<TextField>();
+        this.userInputFieldSubmitButton = this.userInputField.Q<CustomButton>();
+        this.userInputFieldSubmitButton.style.display = DisplayStyle.None;
+
+        this.userInputFieldSubmitButton.RegisterCallback<ClickEvent>(evt => this.resolver.Resolve<GameEngine>().SetCurrentKey("enter"));
+
         this.UserInputField.RegisterCallback<FocusOutEvent>(evt => this.UserInputField.Focus());
-        Clear();
+        this.UserInputField.RegisterValueChangedCallback(evt =>
+        {
+            this.userInputFieldSubmitButton.style.display = String.IsNullOrWhiteSpace(evt.newValue)
+            ? DisplayStyle.None
+            : DisplayStyle.Flex;
+        });
     }
 
     public Label WriteLine(string value = "", string callbackKey = "")

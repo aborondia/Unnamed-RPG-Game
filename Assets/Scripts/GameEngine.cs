@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using VContainer;
 
 namespace RPGGame
@@ -18,6 +19,7 @@ namespace RPGGame
   {
     [Inject] private IObjectResolver resolver;
     [Inject] private UIController uiController;
+    [SerializeField] private InputActionAsset inputActions;
     public UIController UIController => uiController;
     public GameDataBase GameData => resolver.Resolve<GameDataBase>();
     public delegate bool WaitForPlayerActionDelegate();
@@ -36,31 +38,19 @@ namespace RPGGame
 
     void OnEnable()
     {
-      Keyboard.current.onTextInput += OnKeyPressed;
+      foreach (InputAction inputAction in this.inputActions)
+      {
+        inputAction.performed += ctx => SetCurrentKey(ctx.control.displayName);
+        inputAction.Enable();
+      }
     }
 
     void OnDisable()
     {
-      Keyboard.current.onTextInput -= OnKeyPressed;
-    }
-
-    private void OnKeyPressed(char value)
-    {
-      if (Keyboard.current.escapeKey.isPressed)
+      foreach (InputAction inputAction in this.inputActions)
       {
-        SetCurrentKey("escape");
-      }
-      else if (Keyboard.current.spaceKey.isPressed)
-      {
-        SetCurrentKey("space");
-      }
-      else if (Keyboard.current.enterKey.isPressed)
-      {
-        SetCurrentKey("enter");
-      }
-      else
-      {
-        SetCurrentKey(value.ToString());
+        inputAction.performed += ctx => SetCurrentKey(ctx.control.displayName);
+        inputAction.Disable();
       }
     }
 
@@ -72,6 +62,7 @@ namespace RPGGame
       }
 
       this.currentKeyPressed = value.ToLower();
+
     }
 
     public async void StartGame()

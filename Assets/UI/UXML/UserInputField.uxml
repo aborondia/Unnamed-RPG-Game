@@ -1,6 +1,10 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/USS/UserInputField.uss?fileID=7433441132597879392&amp;guid=53788af3f8c253f42b22b14c4a26aca4&amp;type=3#UserInputField"/>
-    <ui:VisualElement name="main">
-        <ui:TextField value="This is text" name="input-text-field" select-all-on-mouse-up="false" select-all-on-focus="false" select-word-by-double-click="false" select-line-by-triple-click="false" emoji-fallback-support="false" class="input-text-field label-white"/>
+    <ui:VisualElement name="main" style="flex-direction: row;">
+        <ui:TextField value="This is text" name="input-text-field" select-all-on-mouse-up="false" select-all-on-focus="false" select-word-by-double-click="false" select-line-by-triple-click="false" emoji-fallback-support="false" class="input-text-field label-white">
+            <CustomButton name="submit-button" class="submit-button">
+                <ui:VisualElement name="icon" class="submit-button-icon"/>
+            </CustomButton>
+        </ui:TextField>
     </ui:VisualElement>
 </ui:UXML>
