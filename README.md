@@ -8,6 +8,8 @@ I recently ported it over to Unity so I could host it as a WebGL build because w
 
 You can play the live version [here](https://andrewbrpggame.netlify.app/). It does work on mobile via touch but that's not recommended. Maybe I'll also properly balance it one day, we'll see.
 
+![A fight with the demon lord](https://i.postimg.cc/xTQDFPWd/demon-lord-fight.png)
+
 ## The basic requirements for the project were as follows:
 * Show statistics (games played, won, etc.)
 * Show player inventory, including equipped items
